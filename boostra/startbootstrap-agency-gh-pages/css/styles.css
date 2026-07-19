@@ -25,7 +25,6 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     background-repeat: no-repeat;
 }
 
-/* Para asegurar que el overlay ocupe todo el espacio */
 .header-overlay {
     min-height: 400px; 
     width: 100%;
@@ -102,7 +101,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 
 
 
-/* --- 4. Secciones y Tarjetas --- */
+/* ---. Secciones y Tarjetas --- */
 
 .section-title { color: #00ffc8; }
 
@@ -468,7 +467,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 
 } 
 
-/* Esto asegura que las clases de Bootstrap se vean bien */
+/*  Bootstrap*/
 .is-valid {
     border-color: #2ecc71 !important;
 }
@@ -480,7 +479,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .timeline > li .timeline-image {
     width: 170px !important;
     height: 170px !important;
-    margin-left: -85px !important; /* Mantiene el círculo perfectamente centrado */
+    margin-left: -85px !important; 
 }
 
 .timeline > li .timeline-image img.img-timeline {
@@ -489,7 +488,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     object-fit: cover !important;
 }
 
-/* Opcional: un toque extra para tus tarjetas */
+/* toque extra para tus tarjetas */
 .card {
     transition: transform 0.2s;
 }

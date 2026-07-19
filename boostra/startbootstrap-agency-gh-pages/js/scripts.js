@@ -6,7 +6,7 @@
 
 window.addEventListener('DOMContentLoaded', event => {
 
-    // --- 1. Navbar shrink y ScrollSpy (Plantilla Agency) ---
+    // --- 1. Navbar shrink y ScrollSpy  ---
     var navbarShrink = function () {
         const navbarCollapsible = document.body.querySelector('#mainNav');
         if (!navbarCollapsible) {
@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
-    // --- 2. Lógica de Registro de Usuario (Validación en tiempo real) ---
+    // ---  Lógica de Registro de Usuario  ---
     const validarRealTime = (input, regex, msgError, msgExito) => {
         if (!input) return false;
         const errorDiv = document.getElementById(`error-${input.id}`);

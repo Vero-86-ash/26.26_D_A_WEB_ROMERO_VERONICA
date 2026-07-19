@@ -422,61 +422,60 @@
             <h3 class="section-subheading text-muted">Reserva tu cita o escríbenos para cualquier consulta.</h3>
         </div>
         
-        <div class="row mb-5 text-center">
-            <div class="col-md-4">
-                <i class="fas fa-map-marker-alt fa-2x text-warning mb-3"></i>
-                <h5>Ubicación</h5>
-                <p class="text-muted">Puembo, Ecuador — Calle Principal</p>
-                <section id="ubicacion" class="text-center py-5">
+        <!-- Sección Ubicación -->
+<section id="ubicacion" class="py-5 text-center">
     <div class="container">
-        <h2 class="mb-3">¿Dónde estamos?</h2>
-        <p class="mb-4">Estamos ubicados en Puembo. ¡Te esperamos!</p>
         
-        <!-- Botón Dinámico -->
-        <a href="https://maps.app.goo.gl/G6wMtNqYbCP4MzoY6" target="_blank" class="btn-maps">
-            <i class="fas fa-map-marker-alt"></i> Cómo llegar a la barbería
-        </a>
-    </div>
-</section>
- 
-            </div>
-            <div class="col-md-4">
-                <i class="fas fa-phone fa-2x text-warning mb-3"></i>
-                <h5>Teléfono</h5>
-                <p class="text-muted">+593 983443420</p>
-            </div>
-            <div class="col-md-4">
-                <i class="fas fa-envelope fa-2x text-warning mb-3"></i>
-                <h5>Email</h5>
-                <p class="text-muted">veronicaruiz393@.com</p>
+        <!-- Título y subtítulo -->
+        <h2 class="section-heading text-uppercase mb-3">¿Dónde estamos?</h2>
+        <h3 class="section-subheading text-muted mb-4">Estamos ubicados en Puembo. ¡Te esperamos!</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="p-4 bg-light rounded shadow-sm">
+                    <i class="fas fa-map-marker-alt fa-3x text-warning mb-3"></i>
+                    <h5 class="fw-bold">Nuestra Dirección</h5>
+                    <p class="text-muted mb-4">Puembo, Ecuador — Plaza Sion, 170905 Quito</p>
+                    
+                    <!-- Botón de Google Maps -->
+                    <a href="https://maps.app.goo.gl/G6wMtNqYbCP4MzoY6" target="_blank" class="btn btn-warning text-dark fw-bold text-uppercase px-4 py-2">
+                        <i class="fas fa-map-marker-alt me-2"></i> Cómo llegar a la barbería
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Formulario (Limpio y listo para que lo conectes con Formspree o similar) -->
-        <form id="contactForm" action="https://formspree.io/f/tu-id-aqui" method="POST">
-            <div class="row align-items-stretch mb-5">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <input class="form-control" name="name" type="text" placeholder="Tu Nombre *" required />
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" name="email" type="email" placeholder="Tu Email *" required />
-                    </div>
-                    <div class="form-group mb-md-0">
-                        <input class="form-control" name="phone" type="tel" placeholder="Tu Teléfono *" required />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group form-group-textarea mb-md-0">
-                        <textarea class="form-control" name="message" placeholder="Tu Mensaje o Reserva *" required></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center">
-                <button class="btn btn-warning btn-xl text-uppercase" type="submit">Enviar Mensaje</button>
-            </div>
-        </form>
     </div>
+</section>
+ 
+          <!-- Sección de Contacto con Enlaces Directos a WhatsApp y Gmail -->
+<div class="container my-5">
+    <div class="row justify-content-center text-center">
+        
+        <!-- WhatsApp -->
+        <div class="col-md-4 mb-4">
+            <a href="https://wa.me/593983443420" target="_blank" class="text-decoration-none">
+                <div class="p-4 bg-light rounded shadow-sm h-100 transition-card">
+                    <i class="fab fa-whatsapp fa-2x text-success mb-3"></i>
+                    <h5 class="fw-bold text-success">WhatsApp</h5>
+                    <p class="text-secondary fw-semibold mb-0">+593 983443420</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Gmail -->
+        <div class="col-md-4 mb-4">
+            <a href="mailto:veronicaruiz393@gmail.com" class="text-decoration-none">
+                <div class="p-4 bg-light rounded shadow-sm h-100 transition-card">
+                    <i class="fas fa-envelope fa-2x text-warning mb-3"></i>
+                    <h5 class="fw-bold text-danger">Gmail</h5>
+                    <p class="text-secondary fw-semibold mb-0">veronicaruiz393@gmail.com</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
 </section>
 <section class="page-section" id="reserva">
     <div class="container">
