@@ -1,91 +1,474 @@
-/* --- Variables y Estilos Generales --- */
-:root {
-    --color-principal: #ffc107; /* Amarillo Warning */
-    --color-fondo: #000000;
-    --color-dark: #212529;
-    --color-texto: #ffffff;
-}
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111; color: rgb(255, 255, 255); margin: 0; }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--color-texto);
-}
 
-.header-bg {
-    /* La línea del background ahora incluye una capa oscura */
-    background: linear-gradient(rgba(76, 38, 38, 0.6), rgba(130, 4, 4, 0.6)), url('resource/image/images.jpg');
+/* Altura y posicionamiento para el header */
+.header-fondo-imagen {
+    position: relative;
+    width: 100%;
+    min-height: 400px; /* Ajusta esto al tamaño que quieras */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                      url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
     background-size: cover;
     background-position: center;
-    height: 40vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-repeat: no-repeat;
 }
 
+/* Para asegurar que el overlay ocupe todo el espacio */
 .header-overlay {
+    min-height: 400px; 
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
 }
+
+/* Estilo para los textos */
+.header-title {
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.header-titulo {
+
+    color: #6691ff;
+
+    font-size: 50px;
+
+    text-shadow: 3px 3px 8px black;
+
+}
+
+.header-subtitulo { color: #ffe600; }
+
+/* ---  Botones --- */
 
 .btn-personalizado {
-    background-color: var(--color-principal);
-    color: var(--color-dark);
-    transition: 0.3s;
+
+    background: linear-gradient(45deg, #ff6600, #ff3300);
+
+    color: white;
+
+    border: none;
+
+    transition: all 0.3s ease;
+
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+
 }
 
-.btn-personalizado:hover {
-    background-color: #e0a800;
-    transform: scale(1.05);
-}
+/* --- Encabezado y Banner --- */
 
-.card-servicio {
-    transition: transform 0.3s ease;
-    border-left: 4px solid var(--color-principal) !important;
-}
+.header-barberia {
 
-.card-servicio:hover {
-    transform: translateY(-10px);
-}
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
 
-.section-title {
-    color: var(--color-principal);
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
+    background-size: cover;
 
-.form-control, .form-select {
-    border: 1px solid #444 !important;
-}
+    background-position: center;
 
-.form-control:focus {
-    border-color: var(--color-principal) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
-    background-color: #1a1a1a !important;
-}
+    background-repeat: no-repeat;
 
-.btn-tiktok-visible {
-    border-color: #000;
-    background-color: #fff;
-    color: #000;
-}
-.btn-tiktok-visible:hover {
-    background-color: #000;
+    padding: 100px 20px;
+
+    text-align: center;
+
     color: #fff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
 }
 
-footer {
-    background-color: #0a0a0a;
-    border-top: 1px solid #333;
+.btn-tiktok-visible { border: 1px solid #fff; color: #fff; }
+
+.btn-tiktok-visible:hover { background-color: #ff0050; color: white; }
+
+.btn-eliminar { margin-left: 10px; }
+
+
+
+/* --- 4. Secciones y Tarjetas --- */
+
+.section-title { color: #00ffc8; }
+
+.trabajo-titulo { color: #0088ff; }
+
+.footer-barberia, .footer-final { background-color: #4b0082; }
+
+
+
+.reserva-card {
+
+    background-color: #111;
+
+    border: 1px solid #333;
+
+    border-left: 5px solid #ff6600;
+
+    border-radius: 8px;
+
+    transition: all 0.3s ease;
+
+    padding: 15px;
+
 }
 
-.footer-divider {
-    width: 50px;
-    border-top: 2px solid var(--color-principal);
+ .seccion-ubicacion {
+
+    padding: 40px 20px;
+
+    text-align: center;
+
 }
 
-@media (max-width: 768px) {
-    .header-bg { height: 30vh; }
-    .container { padding-left: 20px; padding-right: 20px; }
+
+
+.mapa-wrapper {
+
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    border-radius: 15px;
+
+    overflow: hidden; /* Esto hace que los bordes redondeados funcionen */
+
+    border: 2px solid #333;
+
+}
+
+.mapa-container iframe {
+
+    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
+
+}
+
+.boton-mapa {
+
+    display: inline-block;
+
+    background-color: #fff; /* Fondo blanco */
+
+    color: #000;            /* Texto negro */
+
+    padding: 8px 16px;
+
+    text-decoration: none;
+
+    border-radius: 5px;
+
+    font-weight: bold;
+
+    margin-left: 10px;
+
+    transition: 0.3s;
+
+}
+
+
+
+.boton-mapa:hover {
+
+    background-color: #d4af37; /* Se pone dorado al pasar el ratón */
+
+    color: #fff;
+
+}
+
+
+
+/* Filtro para modo oscuro */
+
+.mapa-wrapper iframe {
+
+    filter: grayscale(100%) invert(90%);
+
+}
+
+.header-overlay { background-color: rgba(0,0,0,0.6); padding: 20px; border-radius: 10px; }
+
+ 
+
+.titulo-barberia { font-size: 50px; color: rgb(25, 46, 163); text-shadow: 3px 3px 8px black; }
+
+ 
+
+.subtitulo-barberia { color: #ffe600; }
+
+ 
+
+.menu-navegacion { background-color: #222; padding: 15px; text-align: center; }
+
+ 
+
+.menu-navegacion a { color: white; margin: 15px; text-decoration: none; }
+
+ 
+
+.btn-personalizado { background-color: #6691ff; color: white; border: none; }
+
+ 
+
+.footer-final { background-color: #4b0082; }
+
+.btn-eliminar {
+
+    margin-left: 10px;
+
+} ESTE ESTA BIAN body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111; color: rgb(255, 255, 255); margin: 0; }
+
+ 
+
+.header-banner {
+
+    background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
+
+    background-size: cover;
+
+    background-position: center;
+
+    padding: 80px;
+
+    text-align: center;
+
+}
+
+.header-titulo {
+
+    color: #6691ff;
+
+    font-size: 50px;
+
+    text-shadow: 3px 3px 8px black;
+
+}
+
+
+
+.header-subtitulo { color: #ffe600; }
+
+
+
+/* ---  Botones --- */
+
+.btn-personalizado {
+
+    background: linear-gradient(45deg, #ff6600, #ff3300);
+
+    color: white;
+
+    border: none;
+
+    transition: all 0.3s ease;
+
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+
+}
+
+/* --- Encabezado y Banner --- */
+
+.header-barberia {
+
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    padding: 100px 20px;
+
+    text-align: center;
+
+    color: #fff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.btn-tiktok-visible { border: 1px solid #fff; color: #fff; }
+
+.btn-tiktok-visible:hover { background-color: #ff0050; color: white; }
+
+.btn-eliminar { margin-left: 10px; }
+
+.btn-maps {
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #ff6600, #ff8c00); /* Colores tipo barbería */
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px; /* Bordes muy redondeados */
+    transition: all 0.3s ease; /* Transición suave */
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Efecto al pasar el mouse (Dinámico) */
+.btn-maps:hover {
+    background: linear-gradient(135deg, #ff8c00, #ff6600);
+    transform: translateY(-5px); /* El botón "salta" un poquito */
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.5);
+    color: white;
+}
+
+
+/* --- 4. Secciones y Tarjetas --- */
+
+.section-title { color: #00ffc8; }
+
+.trabajo-titulo { color: #0088ff; }
+
+.footer-barberia, .footer-final { background-color: #4b0082; }
+
+
+
+.reserva-card {
+
+    background-color: #111;
+
+    border: 1px solid #333;
+
+    border-left: 5px solid #ff6600;
+
+    border-radius: 8px;
+
+    transition: all 0.3s ease;
+
+    padding: 15px;
+
+}
+
+ .seccion-ubicacion {
+
+    padding: 40px 20px;
+
+    text-align: center;
+
+}
+
+
+
+.mapa-wrapper {
+
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    border-radius: 15px;
+
+    overflow: hidden; /* Esto hace que los bordes redondeados funcionen */
+
+    border: 2px solid #333;
+
+}
+
+.mapa-container iframe {
+
+    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
+
+}
+
+.boton-mapa {
+
+    display: inline-block;
+
+    background-color: #fff; /* Fondo blanco */
+
+    color: #000;            /* Texto negro */
+
+    padding: 8px 16px;
+
+    text-decoration: none;
+
+    border-radius: 5px;
+
+    font-weight: bold;
+
+    margin-left: 10px;
+
+    transition: 0.3s;
+
+}
+
+
+
+.boton-mapa:hover {
+
+    background-color: #d4af37; /* Se pone dorado al pasar el ratón */
+
+    color: #fff;
+
+}
+
+
+
+/* Filtro para modo oscuro */
+
+.mapa-wrapper iframe {
+
+    filter: grayscale(100%) invert(90%);
+
+}
+
+.header-overlay { background-color: rgba(0,0,0,0.6); padding: 20px; border-radius: 10px; }
+
+ 
+
+.titulo-barberia { font-size: 50px; color: rgb(25, 46, 163); text-shadow: 3px 3px 8px black; }
+
+ 
+
+.subtitulo-barberia { color: #ffe600; }
+
+ 
+
+.menu-navegacion { background-color: #222; padding: 15px; text-align: center; }
+
+ 
+
+.menu-navegacion a { color: white; margin: 15px; text-decoration: none; }
+
+ 
+
+.btn-personalizado { background-color: #6691ff; color: white; border: none; }
+
+ 
+
+.footer-final { background-color: #4b0082; }
+
+.btn-eliminar {
+
+    margin-left: 10px;
+
+} 
+
+/* Esto asegura que las clases de Bootstrap se vean bien */
+.is-valid {
+    border-color: #2ecc71 !important;
+}
+
+.is-invalid {
+    border-color: #ff4757 !important;
+}
+
+/* Opcional: un toque extra para tus tarjetas */
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: scale(1.02);
 }
