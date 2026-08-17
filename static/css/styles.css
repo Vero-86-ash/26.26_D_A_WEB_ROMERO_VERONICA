@@ -1,3 +1,15 @@
+@charset "UTF-8";
+/*!
+* Start Bootstrap - Agency v7.0.12 (https://startbootstrap.com/theme/agency)
+* Copyright 2013-2023 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-agency/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap  v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111; color: rgb(255, 255, 255); margin: 0; }
 
 
@@ -13,7 +25,6 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     background-repeat: no-repeat;
 }
 
-/* Para asegurar que el overlay ocupe todo el espacio */
 .header-overlay {
     min-height: 400px; 
     width: 100%;
@@ -90,7 +101,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 
 
 
-/* --- 4. Secciones y Tarjetas --- */
+/* ---. Secciones y Tarjetas --- */
 
 .section-title { color: #00ffc8; }
 
@@ -234,6 +245,74 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 
     text-align: center;
 
+}
+/* Fondo negro absoluto para la sección */
+.portfolio-negro {
+    background-color: #000000 !important;
+}
+
+/* Tarjetas organizadas con estilo moderno oscuro */
+.portfolio-item-custom {
+    background-color: #121212;
+    border: 1px solid #222222;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Efecto elegante */
+.portfolio-item-custom:hover {
+    transform: translateY(-5px);
+    border-color: #ffc800; /* Color dorado/amarillo */
+}
+
+/* Contenedor de imagen uniforme */
+.portfolio-img-wrapper {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+}
+
+.portfolio-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    transition: transform 0.3s ease;
+}
+
+.portfolio-item-custom:hover .portfolio-img-wrapper img {
+    transform: scale(1.05);
+}
+
+/* Contenido de texto ordenado */
+.portfolio-content {
+    padding: 20px;
+    text-align: center;
+    background-color: #121212;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.portfolio-content h4 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.portfolio-content p {
+    color: #999999;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 .header-titulo {
@@ -413,7 +492,13 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     color: #fff;
 
 }
+.section-negra {
+    background-color: #000000 !important;
+}
 
+.section-negra .section-subheading {
+    color: #aaaaaa !important;
+}
 
 
 /* Filtro para modo oscuro */
@@ -456,7 +541,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 
 } 
 
-/* Esto asegura que las clases de Bootstrap se vean bien */
+/*  Bootstrap*/
 .is-valid {
     border-color: #2ecc71 !important;
 }
@@ -464,11 +549,39 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .is-invalid {
     border-color: #ff4757 !important;
 }
+/* Forzar un tamaño exacto y uniforme para los círculos de la historia */
+.timeline > li .timeline-image {
+    width: 170px !important;
+    height: 170px !important;
+    margin-left: -85px !important; 
+}
 
-/* Opcional: un toque extra para tus tarjetas */
+.timeline > li .timeline-image img.img-timeline {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* toque extra para tus tarjetas */
 .card {
     transition: transform 0.2s;
 }
 .card:hover {
     transform: scale(1.02);
+}
+.producto-card h5 {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+.producto-card:hover h5 {
+    color: #ff6600 !important; /* Cambia a tono naranja al pasar el mouse */
+    transform: translateY(-3px); /* Da un pequeño salto estético */
+}
+/* Tamaño y encuadre uniforme para la galería de trabajos */
+.portfolio-item .img-trabajo {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }

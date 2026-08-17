@@ -8,12 +8,12 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="boostra/startbootstrap-agency-gh-pages/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- CSS Propio desde Flask (Ruta CORRECTA) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-
-
 <body class="bg-black text-white text-center">
 
     <!-- Header -->
@@ -27,7 +27,6 @@
             </div>
         </div>
     </header>
-
    <!-- Navegación -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow" id="mainNav">
     <div class="container">
@@ -40,20 +39,47 @@
         </button>
         
         <!-- Lista de enlaces -->
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#precios">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link" href="#ubicacion">Ubicación</a></li>
-                <li class="nav-item"><a class="nav-link" href="#team">Equipo</a></li>
-                <li class="nav-item"><a class="nav-link" href="#portfolio">Trabajos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#quienes">Historia</a></li>
-                <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
-            </ul>
-        </div>
-    </div>
+<div class="collapse navbar-collapse" id="navbarResponsive">
+    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+
+
+        <li class="nav-item">
+            <a class="nav-link" href="#servicios">Servicios</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#ubicacion">Ubicación</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#team">Equipo</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#portfolio">Trabajos</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#precios">Precios</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#productos">Productos</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#contacto">Contacto</a>
+        </li>
+
+     <li class="nav-item">
+    <a class="nav-link" href="#trabajo">Video</a>
+</li>
+
+    <a class="nav-link" href="#quienes">Quienes Somos</a>
+</li>
+
+    </ul>
+</div>
 </nav>
 <!-- QUIÉNES SOMOS -->
         <section id="quienes" class="py-5">
@@ -73,7 +99,7 @@
                         </p>
                         
                         <div class="contenedor-img-quienes-reducida">
-                            <img src="boostra/imagenes/img/about/unnamed (2).jpg" alt="Barbería Hernández" class="img-fluid rounded shadow-lg">
+                            <img src="static/imagenes/img/about/unnamed (2).jpg" alt="Barbería Hernández" class="img-fluid rounded shadow-lg">
                         </div>
                     </div>
                 </div>
@@ -92,21 +118,23 @@
         <div class="row text-center">
             <!-- Servicio 1 -->
             <div class="col-md-4">
-                <img src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/diseño.jpg" 
+                <img src="static/imagenes/img/portfolio/corte.jpg" 
                      class="rounded-circle mb-3" width="200" height="200" alt="Corte de cabello">
                 <h4 class="my-3">Corte Moderno</h4>
                 <p class="text-white-50">Estilos vanguardistas adaptados a tu tipo de rostro y personalidad.</p>
             </div>
+
+
             <!-- Servicio 2 -->
             <div class="col-md-4">
-                <img src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/unnamed (5).jpg" 
+                <img src="static/imagenes/img/portfolio/unnamed (5).jpg" 
                      class="rounded-circle mb-3" width="200" height="200" alt="Arreglo de barba">
                 <h4 class="my-3">Diseño de Barba</h4>
                 <p class="text-white-50">Perfilado profesional con navaja y tratamiento de hidratación.</p>
             </div>
             <!-- Servicio 3 -->
             <div class="col-md-4">
-                <img src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/facial.jpg" 
+                <img src="static/imagenes/img/about/facial2.png" 
                      class="rounded-circle mb-3" width="200" height="200" alt="Tratamiento facial">
                 <h4 class="my-3">Cuidado Facial</h4>
                 <p class="text-white-50">Limpieza profunda y exfoliación para mantener tu piel impecable.</p>
@@ -152,70 +180,131 @@
         </div>
     </div>
 </section>
-      <!-- Sección de Trabajos (6 elementos) -->
-<section class="page-section bg-light" id="portfolio">
+
+     <!-- Sección de Trabajos (6 elementos) -->
+
+<section class="page-section portfolio-negro" id="portfolio">
+
     <div class="container">
+
         <div class="text-center">
-            <h2 class="section-heading text-uppercase">Nuestros Trabajos</h2>
+
+            <h2 class="section-heading text-uppercase text-white">Nuestros Trabajos</h2>
+
             <h3 class="section-subheading text-muted">Estilos realizados en Barbería Hernández.</h3>
+
         </div>
+
         <div class="row">
+
             <!-- Item 1 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/tinturado.jpg" alt="Corte 1" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/tinturado.jpg" alt="Corte 1" />
+
                     <div class="portfolio-caption text-center">
-                        <div class="portfolio-caption-heading">Fade Clásico</div>
+
+                        <div class="portfolio-caption-heading">Corte Clásico</div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <!-- Item 2 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/unnamed (1).jpg" alt="Corte 2" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/unnamed (1).jpg" alt="Corte 2" />
+
                     <div class="portfolio-caption text-center">
+
                         <div class="portfolio-caption-heading">Barba Perfilada</div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <!-- Item 3 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/ima..jpg" alt="Corte 3" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/ima..jpg" alt="Corte 3" />
+
                     <div class="portfolio-caption text-center">
-                        <div class="portfolio-caption-heading">Cuidado Facial</div>
+
+                        <div class="portfolio-caption-heading">Corte bajo</div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <!-- Item 4 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/unnamed.jpg" alt="Corte 4" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/unnamed.jpg" alt="Corte 4" />
+
                     <div class="portfolio-caption text-center">
+
                         <div class="portfolio-caption-heading">Estilo Moderno</div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <!-- Item 5 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/corte.jpg" alt="Corte 5" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/corte.jpg" alt="Corte 5" />
+
                     <div class="portfolio-caption text-center">
-                        <div class="portfolio-caption-heading">Degradado Alto</div>
+
+                        <div class="portfolio-caption-heading">Degradado </div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <!-- Item 6 -->
+
             <div class="col-lg-4 col-sm-6 mb-4">
+
                 <div class="portfolio-item">
-                    <img class="img-fluid" src="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/unnamed (6).jpg" alt="Corte 6" />
+
+                    <img class="img-fluid" src="static/imagenes/img/portfolio/unnamed (6).jpg" alt="Corte 6" />
+
                     <div class="portfolio-caption text-center">
+
                         <div class="portfolio-caption-heading">Corte Ejecutivo</div>
+
                     </div>
+
                 </div>
+
             </div>
-        </div>
-    </div>
+
 </section>
                         <!-- Sección Nuestra Historia -->
 <section class="page-section" id="quienes">
@@ -228,7 +317,7 @@
             <!-- Inicio -->
             <li>
                 <div class="timeline-image">
-                    <img class="rounded-circle img-fluid img-timeline" src="boostra/startbootstrap-agency-gh-pages/assets/img/about/and..webp" alt="Inicios" />
+                    <img class="rounded-circle img-fluid img-timeline" src="static/imagenes/img/about/and..webp" alt="Inicios" />
                 </div>
                 <div class="timeline-panel">
                     <div class="timeline-heading">
@@ -241,7 +330,7 @@
             <!-- Crecimiento -->
             <li class="timeline-inverted">
                 <div class="timeline-image">
-                    <img class="rounded-circle img-fluid img-timeline" src="boostra/startbootstrap-agency-gh-pages/assets/img/about/antes.webp" alt="Crecimiento" />
+                    <img class="rounded-circle img-fluid img-timeline" src="static/imagenes/img/about/antes.webp" alt="Crecimiento" />
                 </div>
                 <div class="timeline-panel">
                     <div class="timeline-heading">
@@ -254,7 +343,7 @@
             <!-- Actualidad -->
             <li>
                 <div class="timeline-image">
-                    <img class="rounded-circle img-fluid img-timeline" src="boostra/startbootstrap-agency-gh-pages/assets/img/about/images.jpg" alt="Actualidad" />
+                    <img class="rounded-circle img-fluid img-timeline" src="static/imagenes/img/about/images.jpg" alt="Actualidad" />
                 </div>
                 <div class="timeline-panel">
                     <div class="timeline-heading">
@@ -289,36 +378,30 @@
         </div>
         <div class="row">
             <!-- Profesional 1 -->
-<div class="col-lg-4">
-    <div class="team-member text-center">
-        <img class="mx-auto rounded-circle" src="boostra/startbootstrap-agency-gh-pages/assets/img/about/and..webp" alt="Andres Hernández" style="width: 225px; height: 225px; object-fit: cover;" />
-        <h4>Andres Hernández</h4>
-        <p class="text-muted">Barbero Principal</p>
-        <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/p/El-Dsombrero-Classic-Line-61553965016441/" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-facebook-f"></i>
-        </a>
-    </div>
-</div>
+            <div class="col-lg-4">
+                <div class="team-member">
+                    <img class="mx-auto rounded-circle" src="static/imagenes/img/team/Andy.jpeg" alt="Carlos Hernández" style="width: 225px !important; height: 225px !important; object-fit: cover !important;" />
+                    <h4>Andres Hernández</h4>
+                    <p class="text-muted">Barbero Principal</p>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/p/El-Dsombrero-Classic-Line-61553965016441/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
             <!-- Profesional 2 -->
             <div class="col-lg-4">
                 <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="boostra/startbootstrap-agency-gh-pages/assets/img/team/Diana.jpeg" alt="Diana Menendez" style="width: 225px !important; height: 225px !important; object-fit: cover !important;" />
+                    <img class="mx-auto rounded-circle" src="static/imagenes/img/team/Diana.jpeg" alt="Diana Menendez" style="width: 225px !important; height: 225px !important; object-fit: cover !important;" />
                     <h4>Diana Menendez</h4>
                     <p class="text-muted">Ayudante</p>
-                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/share/1JqDNZaeRx/" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-facebook-f"></i>
-        </a>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/share/1JqDNZaeRx/"><i class="fab fa-facebook-f"></i></a>
                 </div>
             </div>
             <!-- Profesional 3 -->
             <div class="col-lg-4">
                 <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="boostra/startbootstrap-agency-gh-pages/assets/img/team/Vero.jpeg" alt="Verónica Romero" style="width: 225px !important; height: 225px !important; object-fit: cover !important;" />
+                    <img class="mx-auto rounded-circle" src="static/imagenes/img/team/Vero.jpeg" alt="Verónica Romero" style="width: 225px !important; height: 225px !important; object-fit: cover !important;" />
                     <h4>Verónica Romero</h4>
                     <p class="text-muted">Ayudante</p>
-                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/me/" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-facebook-f"></i>
-        </a>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/me/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
                 </div>
             </div>
         </div>
@@ -339,28 +422,28 @@
     <div class="row align-items-center">
     <!-- Producto 1: Cera -->
     <div class="col-md-3 col-sm-6 my-3 text-center">
-        <a href="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/pro/cera.jpeg" target="_blank" class="text-decoration-none producto-card">
+        <a href="static/imagenes/img/about/cera.png" target="_blank" class="text-decoration-none producto-card">
             <h5 class="fw-bold text-uppercase text-warning mb-1">Cera Profesional</h5>
             <span class="text-muted small">Fijación extrema</span>
         </a>
     </div>
     <!-- Producto 2: Spray -->
     <div class="col-md-3 col-sm-6 my-3 text-center">
-        <a href="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/pro/spray.jpeg" target="_blank" class="text-decoration-none producto-card">
+        <a href="static/imagenes/img/about/spray.jpeg" target="_blank" class="text-decoration-none producto-card">
             <h5 class="fw-bold text-uppercase text-warning mb-1">Spray Fijador</h5>
             <span class="text-muted small">Acabado natural</span>
         </a>
     </div>
     <!-- Producto 3: Espuma -->
     <div class="col-md-3 col-sm-6 my-3 text-center">
-        <a href="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/pro/espuma.jpeg" target="_blank" class="text-decoration-none producto-card">
+        <a href="static/imagenes/img/about/espuma.png" target="_blank" class="text-decoration-none producto-card">
             <h5 class="fw-bold text-uppercase text-warning mb-1">Espuma de Afeitar</h5>
             <span class="text-muted small">Protección total</span>
         </a>
     </div>
     <!-- Producto 4: Crema -->
     <div class="col-md-3 col-sm-6 my-3 text-center">
-        <a href="boostra/startbootstrap-agency-gh-pages/assets/img/portfolio/pro/crema.webp" target="_blank" class="text-decoration-none producto-card">
+        <a href="static/imagenes/img/about/crema.webp" target="_blank" class="text-decoration-none producto-card">
             <h5 class="fw-bold text-uppercase text-warning mb-1">Crema para Barba</h5>
             <span class="text-muted small">Hidratación profunda</span>
         </a>
@@ -501,7 +584,7 @@
         </div>
     </div>
 </footer>
-        <<!-- Modal 1: Corte Degradado -->
+        <!-- Modal 1: Corte Degradado -->
 <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -537,18 +620,22 @@
     </div>
 </div>
  <hr class="border-secondary my-5">
- 
-        <section class="py-3">
-            <h2 class="section-title mb-4">Conoce Nuestro Trabajo</h2>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="ratio ratio-16x9 shadow rounded">
-                        <iframe src="https://www.youtube.com/embed/QdoTOumGqcM?start=13" title="Video Barbería Hernández" allowfullscreen></iframe>
-                    </div>
+
+<section class="page-section section-negra" id="trabajo">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading text-uppercase text-white">Conoce Nuestro Trabajo</h2>
+            <h3 class="section-subheading text-muted">El arte y la precisión en cada corte</h3>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="ratio ratio-16x9 shadow rounded overflow-hidden">
+                    <iframe src="https://www.youtube.com/embed/QdoTOumGqcM?start=13" title="Video Barbería Hernández" allowfullscreen></iframe>
                 </div>
             </div>
-        </section>
- 
+        </div>
+    </div>
+</section>
         <!-- Modal 2: Diseño de Barba -->
 <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -584,7 +671,7 @@
         </div>
     </div>
 </div>
-        <!-- Portfolio item 3 modal popup-->
+        <!-- Portfolio item 3 -->
         <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -619,7 +706,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal 4: Estilo Moderno / Hair Tattoo -->
+        <!-- Modal 4: Estilo -->
 <div class="portfolio-modal modal fade" id="portfolioModal4" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -765,12 +852,15 @@
         </aside>
  
 
-        <div class="my-5">
-            <h2 class="h4 mb-3 text-white fw-bold">Reserva tu cita</h2>
-            <button class="btn btn-personalizado btn-lg shadow px-5 fw-bold">Reserva tu Turno</button>
-        </div>
-        <div class="container py-5">
+        <div class="my-5 text-center">
+    <h2 class="h4 mb-3 text-white fw-bold">Reserva tu cita</h2>
+    <button type="button" class="btn btn-personalizado btn-lg shadow px-5 fw-bold text-uppercase" onclick="document.getElementById('registro').scrollIntoView({behavior: 'smooth'});">
+        Reserva tu Turno
+    </button>
+</div>
+<div class="container py-5">
     <div class="row justify-content-center">
+    
         <!-- Formulario -->
         <div class="col-md-6">
             <form id="form-reserva" class="p-4 border rounded shadow-sm bg-white">
@@ -788,12 +878,12 @@
                     <label class="form-label">Servicio</label>
                     <select id="servicio-reserva" class="form-select" required>
                         <option value="">Seleccione un servicio</option>
-                        <option value="Corte moderno">Corte moderno ($5.00)</option>
-                        <option value="Afeitado profesional">Afeitado profesional ($4.00)</option>
-                        <option value="Diseño de barba">Diseño de barba ($3.50)</option>
+                        <option value="Corte moderno">Corte moderno ($8.00)</option>
+                        <option value="Afeitado profesional">Afeitado profesional ($6.00)</option>
+                        <option value="Diseño de barba">Diseño de barba ($4.50)</option>
                         <option value="Perfilado de cejas">Perfilado de cejas ($2.00)</option>
-                        <option value="Limpieza facial">Limpieza facial ($8.00)</option>
-                        <option value="Hidratación facial">Hidratación facial ($6.00)</option>
+                        <option value="Limpieza facial">Limpieza facial ($20.00)</option>
+                        <option value="Hidratación facial">Hidratación facial ($7.00)</option>
                     </select>
                 </div>
 
@@ -831,7 +921,7 @@
             <div class="col-lg-4 my-3 my-lg-0">
                 <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/p/El-Dsombrero-Classic-Line-61553965016441/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                 <a class="btn btn-dark btn-social mx-2" href="https://www.instagram.com/p/DRTTd3wjVl-/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a class="btn btn-dark btn-social mx-2" href="https://www.tiktok.com/@hernandezbarberia19" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a class="btn btn-dark btn-social mx-2" href="https://www.tiktok.com/@hernandezbarberiastudio?is_from_webapp=1&sender_device=pc" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
             </div>
             <!-- Tu Footer (Justo aquí) -->
     <footer class="footer py-4 bg-dark text-white text-center">
@@ -847,7 +937,7 @@
     
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         
-        <script src="boostra/startbootstrap-agency-gh-pages/js/scripts.js"></script>
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
     </body>
 </html>

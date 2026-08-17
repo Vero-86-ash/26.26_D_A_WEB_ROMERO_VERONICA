@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Productos - Barbería Hernández{% endblock %}
+{% block content %}
+    <h2 class="text-warning mb-4"><i class="fa-solid fa-boxes-stacked me-2"></i>Módulo de Productos</h2>
+    <ul class="list-group list-group-flush">
+        {% for p in productos %}
+            <li class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                {{ p.nombre }} <span class="badge bg-warning text-dark">{{ p.precio }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

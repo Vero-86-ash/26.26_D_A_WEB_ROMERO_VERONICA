@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Clientes - Barbería Hernández{% endblock %}
+{% block content %}
+    <h2 class="text-warning mb-4"><i class="fa-solid fa-users me-2"></i>Módulo de Clientes</h2>
+    <ul class="list-group">
+        {% for c in clientes %}
+            <li class="list-group-item bg-dark text-white border-secondary">
+                <strong>{{ c.nombre }}</strong> - Tel: {{ c.telefono }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
