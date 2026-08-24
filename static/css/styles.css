@@ -10,14 +10,20 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111; color: rgb(255, 255, 255); margin: 0; }
 
+/* 1. ESTILOS GLOBALES Y CUERPO */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #111;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
 
-/* Altura y posicionamiento para el header */
+/* 2. HEADER, BANNER Y FONDOS */
 .header-fondo-imagen {
     position: relative;
     width: 100%;
-    min-height: 400px; /* Ajusta esto al tamaño que quieras */
+    min-height: 400px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                       url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
     background-size: cover;
@@ -28,230 +34,145 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .header-overlay {
     min-height: 400px; 
     width: 100%;
+    background-color: rgba(0,0,0,0.6);
+    padding: 20px;
+    border-radius: 10px;
 }
 
-/* Estilo para los textos */
-.header-title {
-    font-size: 3.5rem;
-    text-transform: uppercase;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-}
-
-.header-titulo {
-
+.header-title, .header-titulo, .titulo-barberia {
     color: #6691ff;
-
     font-size: 50px;
-
     text-shadow: 3px 3px 8px black;
-
+    text-transform: uppercase;
 }
 
-.header-subtitulo { color: #ffe600; }
-
-/* ---  Botones --- */
-
-.btn-personalizado {
-
-    background: linear-gradient(45deg, #ff6600, #ff3300);
-
-    color: white;
-
-    border: none;
-
-    transition: all 0.3s ease;
-
-    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
-
+.header-subtitulo, .subtitulo-barberia { 
+    color: #ffe600; 
 }
-
-/* --- Encabezado y Banner --- */
 
 .header-barberia {
-
     background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
-
     background-size: cover;
-
     background-position: center;
-
     background-repeat: no-repeat;
-
     padding: 100px 20px;
-
     text-align: center;
-
     color: #fff;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
-
 }
-
-.btn-tiktok-visible { border: 1px solid #fff; color: #fff; }
-
-.btn-tiktok-visible:hover { background-color: #ff0050; color: white; }
-
-.btn-eliminar { margin-left: 10px; }
-
-
-
-/* ---. Secciones y Tarjetas --- */
-
-.section-title { color: #00ffc8; }
-
-.trabajo-titulo { color: #0088ff; }
-
-.footer-barberia, .footer-final { background-color: #4b0082; }
-
-
-
-.reserva-card {
-
-    background-color: #111;
-
-    border: 1px solid #333;
-
-    border-left: 5px solid #ff6600;
-
-    border-radius: 8px;
-
-    transition: all 0.3s ease;
-
-    padding: 15px;
-
-}
-
- .seccion-ubicacion {
-
-    padding: 40px 20px;
-
-    text-align: center;
-
-}
-
-
-
-.mapa-wrapper {
-
-    max-width: 800px;
-
-    margin: 0 auto;
-
-    border-radius: 15px;
-
-    overflow: hidden; /* Esto hace que los bordes redondeados funcionen */
-
-    border: 2px solid #333;
-
-}
-
-.mapa-container iframe {
-
-    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
-
-}
-
-.boton-mapa {
-
-    display: inline-block;
-
-    background-color: #fff; /* Fondo blanco */
-
-    color: #000;            /* Texto negro */
-
-    padding: 8px 16px;
-
-    text-decoration: none;
-
-    border-radius: 5px;
-
-    font-weight: bold;
-
-    margin-left: 10px;
-
-    transition: 0.3s;
-
-}
-
-
-
-.boton-mapa:hover {
-
-    background-color: #d4af37; /* Se pone dorado al pasar el ratón */
-
-    color: #fff;
-
-}
-
-
-
-/* Filtro para modo oscuro */
-
-.mapa-wrapper iframe {
-
-    filter: grayscale(100%) invert(90%);
-
-}
-
-.header-overlay { background-color: rgba(0,0,0,0.6); padding: 20px; border-radius: 10px; }
-
- 
-
-.titulo-barberia { font-size: 50px; color: rgb(25, 46, 163); text-shadow: 3px 3px 8px black; }
-
- 
-
-.subtitulo-barberia { color: #ffe600; }
-
- 
-
-.menu-navegacion { background-color: #222; padding: 15px; text-align: center; }
-
- 
-
-.menu-navegacion a { color: white; margin: 15px; text-decoration: none; }
-
- 
-
-.btn-personalizado { background-color: #6691ff; color: white; border: none; }
-
- 
-
-.footer-final { background-color: #4b0082; }
-
-.btn-eliminar {
-
-    margin-left: 10px;
-
-} ESTE ESTA BIAN body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111; color: rgb(255, 255, 255); margin: 0; }
-
- 
 
 .header-banner {
-
     background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
-
     background-size: cover;
-
     background-position: center;
-
     padding: 80px;
-
     text-align: center;
-
 }
-/* Fondo negro absoluto para la sección */
+
+/* 3. BOTONES Y NAVEGACIÓN */
+.btn-personalizado {
+    background: linear-gradient(45deg, #ff6600, #ff3300);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+}
+
+.btn-tiktok-visible { 
+    border: 1px solid #fff; 
+    color: #fff; 
+}
+
+.btn-tiktok-visible:hover { 
+    background-color: #ff0050; 
+    color: white; 
+}
+
+.btn-eliminar { 
+    margin-left: 10px; 
+}
+
+.btn-maps {
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #ff6600, #ff8c00);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-maps:hover {
+    background: linear-gradient(135deg, #ff8c00, #ff6600);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.5);
+    color: white;
+}
+
+.menu-navegacion { 
+    background-color: #222; 
+    padding: 15px; 
+    text-align: center; 
+}
+
+.menu-navegacion a { 
+    color: white; 
+    margin: 15px; 
+    text-decoration: none; 
+}
+
+/* 4. SECCIONES GENERALES Y TARJETAS */
+.section-title { color: #00ffc8; }
+.trabajo-titulo { color: #0088ff; }
+.footer-barberia, .footer-final { background-color: #4b0082; }
+
+.section-negra {
+    background-color: #000000 !important;
+}
+
+.section-negra .section-subheading {
+    color: #aaaaaa !important;
+}
+
+.reserva-card {
+    background-color: #111;
+    border: 1px solid #333;
+    border-left: 5px solid #ff6600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    padding: 15px;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.producto-card h5 {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.producto-card:hover h5 {
+    color: #ff6600 !important;
+    transform: translateY(-3px);
+}
+
+/* 5. PORTAFOLIO Y GALERÍA DE TRABAJOS */
 .portfolio-negro {
     background-color: #000000 !important;
 }
 
-/* Tarjetas organizadas con estilo moderno oscuro */
 .portfolio-item-custom {
     background-color: #121212;
     border: 1px solid #222222;
@@ -263,13 +184,11 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     flex-direction: column;
 }
 
-/* Efecto elegante */
 .portfolio-item-custom:hover {
     transform: translateY(-5px);
-    border-color: #ffc800; /* Color dorado/amarillo */
+    border-color: #ffc800;
 }
 
-/* Contenedor de imagen uniforme */
 .portfolio-img-wrapper {
     width: 100%;
     height: 220px;
@@ -291,7 +210,6 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     transform: scale(1.05);
 }
 
-/* Contenido de texto ordenado */
 .portfolio-content {
     padding: 20px;
     text-align: center;
@@ -315,268 +233,6 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     margin: 0;
 }
 
-.header-titulo {
-
-    color: #6691ff;
-
-    font-size: 50px;
-
-    text-shadow: 3px 3px 8px black;
-
-}
-
-
-
-.header-subtitulo { color: #ffe600; }
-
-
-
-/* ---  Botones --- */
-
-.btn-personalizado {
-
-    background: linear-gradient(45deg, #ff6600, #ff3300);
-
-    color: white;
-
-    border: none;
-
-    transition: all 0.3s ease;
-
-    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
-
-}
-
-/* --- Encabezado y Banner --- */
-
-.header-barberia {
-
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
-
-    background-size: cover;
-
-    background-position: center;
-
-    background-repeat: no-repeat;
-
-    padding: 100px 20px;
-
-    text-align: center;
-
-    color: #fff;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    align-items: center;
-
-}
-
-.btn-tiktok-visible { border: 1px solid #fff; color: #fff; }
-
-.btn-tiktok-visible:hover { background-color: #ff0050; color: white; }
-
-.btn-eliminar { margin-left: 10px; }
-
-.btn-maps {
-    display: inline-block;
-    padding: 15px 30px;
-    background: linear-gradient(135deg, #ff6600, #ff8c00); /* Colores tipo barbería */
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 50px; /* Bordes muy redondeados */
-    transition: all 0.3s ease; /* Transición suave */
-    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Efecto al pasar el mouse (Dinámico) */
-.btn-maps:hover {
-    background: linear-gradient(135deg, #ff8c00, #ff6600);
-    transform: translateY(-5px); /* El botón "salta" un poquito */
-    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.5);
-    color: white;
-}
-
-
-/* --- 4. Secciones y Tarjetas --- */
-
-.section-title { color: #00ffc8; }
-
-.trabajo-titulo { color: #0088ff; }
-
-.footer-barberia, .footer-final { background-color: #4b0082; }
-
-
-
-.reserva-card {
-
-    background-color: #111;
-
-    border: 1px solid #333;
-
-    border-left: 5px solid #ff6600;
-
-    border-radius: 8px;
-
-    transition: all 0.3s ease;
-
-    padding: 15px;
-
-}
-
- .seccion-ubicacion {
-
-    padding: 40px 20px;
-
-    text-align: center;
-
-}
-
-
-
-.mapa-wrapper {
-
-    max-width: 800px;
-
-    margin: 0 auto;
-
-    border-radius: 15px;
-
-    overflow: hidden; /* Esto hace que los bordes redondeados funcionen */
-
-    border: 2px solid #333;
-
-}
-
-.mapa-container iframe {
-
-    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
-
-}
-
-.boton-mapa {
-
-    display: inline-block;
-
-    background-color: #fff; /* Fondo blanco */
-
-    color: #000;            /* Texto negro */
-
-    padding: 8px 16px;
-
-    text-decoration: none;
-
-    border-radius: 5px;
-
-    font-weight: bold;
-
-    margin-left: 10px;
-
-    transition: 0.3s;
-
-}
-
-
-
-.boton-mapa:hover {
-
-    background-color: #d4af37; /* Se pone dorado al pasar el ratón */
-
-    color: #fff;
-
-}
-.section-negra {
-    background-color: #000000 !important;
-}
-
-.section-negra .section-subheading {
-    color: #aaaaaa !important;
-}
-
-
-/* Filtro para modo oscuro */
-
-.mapa-wrapper iframe {
-
-    filter: grayscale(100%) invert(90%);
-
-}
-
-.header-overlay { background-color: rgba(0,0,0,0.6); padding: 20px; border-radius: 10px; }
-
- 
-
-.titulo-barberia { font-size: 50px; color: rgb(25, 46, 163); text-shadow: 3px 3px 8px black; }
-
- 
-
-.subtitulo-barberia { color: #ffe600; }
-
- 
-
-.menu-navegacion { background-color: #222; padding: 15px; text-align: center; }
-
- 
-
-.menu-navegacion a { color: white; margin: 15px; text-decoration: none; }
-
- 
-
-.btn-personalizado { background-color: #6691ff; color: white; border: none; }
-
- 
-
-.footer-final { background-color: #4b0082; }
-
-.btn-eliminar {
-
-    margin-left: 10px;
-
-} 
-
-/*  Bootstrap*/
-.is-valid {
-    border-color: #2ecc71 !important;
-}
-
-.is-invalid {
-    border-color: #ff4757 !important;
-}
-/* Forzar un tamaño exacto y uniforme para los círculos de la historia */
-.timeline > li .timeline-image {
-    width: 170px !important;
-    height: 170px !important;
-    margin-left: -85px !important; 
-}
-
-.timeline > li .timeline-image img.img-timeline {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
-
-/* toque extra para tus tarjetas */
-.card {
-    transition: transform 0.2s;
-}
-.card:hover {
-    transform: scale(1.02);
-}
-.producto-card h5 {
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-.producto-card:hover h5 {
-    color: #ff6600 !important; /* Cambia a tono naranja al pasar el mouse */
-    transform: translateY(-3px); /* Da un pequeño salto estético */
-}
-/* Tamaño y encuadre uniforme para la galería de trabajos */
 .portfolio-item .img-trabajo {
     width: 100%;
     height: 280px;
@@ -584,4 +240,84 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     object-position: center;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+}
+
+/* 6. SECCIÓN DE UBICACIÓN Y MAPAS */
+.seccion-ubicacion {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.mapa-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #333;
+}
+
+.mapa-container iframe, .mapa-wrapper iframe {
+    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
+}
+
+.boton-mapa {
+    display: inline-block;
+    background-color: #fff;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+
+.boton-mapa:hover {
+    background-color: #d4af37;
+    color: #fff;
+}
+
+/* 7. VALIDACIONES DE FORMULARIOS (BOOTSTRAP) */
+.is-valid {
+    border-color: #2ecc71 !important;
+}
+
+.is-invalid {
+    border-color: #ff4757 !important;
+}
+
+/* 8. SECCIÓN "NUESTRA HISTORIA" */
+.timeline > li > .timeline-image {
+    width: 120px; 
+    height: 120px; 
+    margin-left: -60px; 
+}
+
+.timeline > li > .timeline-image h4 {
+    margin-top: 25px;
+    font-size: 1rem;
+}
+
+.timeline > li .timeline-panel {
+    color: #ffffff !important;
+}
+
+.timeline > li .timeline-panel h4, 
+.timeline > li .timeline-panel .subheading {
+    color: #d4af37 !important;
+}
+
+.timeline > li .timeline-panel p {
+    color: #cccccc !important;
+}
+
+/* Bordes de validación en tiempo real para inputs y textareas */
+input.is-invalid, textarea.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+input.is-valid, textarea.is-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25) !important;
 }

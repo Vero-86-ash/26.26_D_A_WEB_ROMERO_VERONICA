@@ -2,13 +2,17 @@ from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
 
-# Ruta principal (Permite acceder con '/' o '/index')
+# Ruta principal raíz
 @app.route('/')
-@app.route('/index')
 def home():
     return render_template('index.html')
 
-# Ruta para el nuevo index1.html
+# Ruta index 
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+# Ruta index1.html
 @app.route('/index1')
 def index1():
     return render_template('index1.html')
