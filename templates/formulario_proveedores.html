@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Proveedor - Barbería Hernández{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark text-light border-secondary p-4 shadow-sm">
+                <h3 class="text-warning mb-4 text-center">
+                    <i class="fa-solid fa-truck-field me-2"></i>Registrar Nuevo Proveedor
+                </h3>
+                
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- RUC: Solo números -->
+                    <div class="mb-3">
+                        {{ form.ruc.label(class="form-label text-light") }}
+                        {{ form.ruc(class="form-control bg-secondary text-light border-0", inputmode="numeric", pattern="[0-9]*", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                        {% for error in form.ruc.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Empresa: Valida texto de negocio -->
+                    <div class="mb-3">
+                        {{ form.empresa.label(class="form-label text-light") }}
+                        {{ form.empresa(class="form-control bg-secondary text-light border-0") }}
+                        {% for error in form.empresa.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Teléfono: Solo números -->
+                    <div class="mb-3">
+                        {{ form.telefono.label(class="form-label text-light") }}
+                        {{ form.telefono(class="form-control bg-secondary text-light border-0", inputmode="numeric", pattern="[0-9]*", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                        {% for error in form.telefono.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('proveedores') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        {{ form.submit(class="btn btn-warning text-dark fw-bold") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

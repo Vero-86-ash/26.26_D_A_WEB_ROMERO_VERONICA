@@ -3,38 +3,60 @@
 {% block title %}Facturación - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-warning mb-0">
-        <i class="fa-solid fa-file-invoice-dollar me-2"></i>Módulo de Facturación
-    </h2>
-</div>
+<div class="container mt-4">
+    <!-- Botón verde alineado arriba, sin título largo -->
+    <div class="mb-4">
+        <a href="{{ url_for('nueva_factura') }}" class="btn btn-success fw-bold text-white">
+            <i class="fa-solid fa-plus me-1"></i> Nueva Factura
+        </a>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-dark table-hover align-middle border-secondary">
-        <thead>
-            <tr class="table-secondary text-dark">
-                <th>Nº Factura</th>
-                <th>Cliente</th>
-                <th>Monto Total</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for f in facturas %}
-            <tr>
-                <td><strong>{{ f.num }}</strong></td>
-                <td>{{ f.cliente }}</td>
-                <td class="text-warning fw-bold">{{ f.monto }}</td>
-                <td>
-                    {% if f.estado == 'Pagado' %}
-                        <span class="badge bg-success">Pagado</span>
-                    {% else %}
-                        <span class="badge bg-danger">Pendiente</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle border-secondary shadow">
+            <thead>
+                <tr class="table-secondary text-dark">
+                    <th>Nº Factura</th>
+                    <th>Cliente</th>
+                    <th>Método de Pago</th>
+                    <th>Monto Total</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in facturas %}
+                <tr>
+                    <td><strong>{{ f.num }}</strong></td>
+                    <td>{{ f.cliente }}</td>
+                    <td><span class="badge bg-secondary">{{ f.metodo_pago }}</span></td>
+                    <td class="text-warning fw-bold">{{ f.monto }}</td>
+                    <td>
+                        {% if f.estado == 'Pagado' %}
+                            <span class="badge bg-success">Pagado</span>
+                        {% else %}
+                            <span class="badge bg-danger">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <!-- Botón para ver el detalle -->
+                        <a href="{{ url_for('detalle_factura', num=f.num) }}" class="btn btn-sm btn-outline-info me-1">
+                            <i class="fa-solid fa-eye"></i> Ver
+                        </a>
+                        <!-- Botón para cambiar el estado -->
+                        <a href="{{ url_for('cambiar_estado_factura', num=f.num) }}" class="btn btn-sm btn-outline-warning">
+                            <i class="fa-solid fa-arrows-rotate"></i> Cambiar
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        <em>No hay facturas registradas en este momento.</em>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

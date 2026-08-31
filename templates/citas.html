@@ -3,44 +3,58 @@
 {% block title %}Citas Agendadas - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-warning mb-0">
-        <i class="fa-solid fa-calendar-check me-2"></i>Citas Agendadas
-    </h2>
-</div>
+<div class="container mt-4">
+    <div class="mb-4">
+        <a href="{{ url_for('formulario_cita') }}" class="btn btn-success fw-bold text-white">
+            <i class="fa-solid fa-plus me-1"></i> Agendar Cita
+        </a>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-dark table-hover align-middle border-secondary">
-        <thead>
-            <tr class="table-secondary text-dark">
-                <th>Cód. Cita</th>
-                <th>Cliente</th>
-                <th>Barbero</th>
-                <th>Servicio</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in citas %}
-            <tr>
-                <td><strong>{{ c.id }}</strong></td>
-                <td>{{ c.cliente }}</td>
-                <td>{{ c.barbero }}</td>
-                <td>{{ c.servicio }}</td>
-                <td>{{ c.fecha }}</td>
-                <td><span class="badge bg-secondary">{{ c.hora }}</span></td>
-                <td>
-                    {% if c.estado == 'Confirmada' %}
-                        <span class="badge bg-success">Confirmada</span>
-                    {% else %}
-                        <span class="badge bg-warning text-dark">Pendiente</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle border-secondary shadow">
+            <thead>
+                <tr class="table-secondary text-dark">
+                    <th>Cód. Cita</th>
+                    <th>Cliente</th>
+                    <th>Barbero</th>
+                    <th>Servicio</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in citas %}
+                <tr>
+                    <td><strong>{{ c.id }}</strong></td>
+                    <td>{{ c.cliente }}</td>
+                    <td>{{ c.barbero }}</td>
+                    <td>{{ c.servicio }}</td>
+                    <td>{{ c.fecha }}</td>
+                    <td><span class="badge bg-secondary">{{ c.hora }}</span></td>
+                    <td>
+                        {% if c.estado == 'Confirmada' %}
+                            <span class="badge bg-success">Confirmada</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ url_for('cambiar_estado_cita', id=c.id) }}" class="btn btn-sm btn-outline-info">
+                            <i class="fa-solid fa-arrows-rotate"></i> Cambiar
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-muted">
+                        <em>No hay citas agendadas en este momento. Registre una nueva cita.</em>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

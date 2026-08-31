@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Factura - Barbería Hernández{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-secondary">
+                <div class="card-header bg-dark text-warning text-center">
+                    <h4 class="mb-0"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Emitir Nueva Factura</h4>
+                </div>
+                <div class="card-body bg-light text-dark">
+                    <form method="POST" action="" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.cliente.label(class="form-label fw-bold") }}
+                            {{ form.cliente(class="form-control", placeholder="Ej. Carlos Mendoza") }}
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.metodo_pago.label(class="form-label fw-bold") }}
+                                {{ form.metodo_pago(class="form-select") }}
+                                {% for error in form.metodo_pago.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.estado.label(class="form-label fw-bold") }}
+                                {{ form.estado(class="form-select") }}
+                                {% for error in form.estado.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ url_for('facturacion') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                            {{ form.submit(class="btn btn-warning fw-bold text-dark") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

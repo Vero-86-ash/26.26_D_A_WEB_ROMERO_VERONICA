@@ -3,30 +3,65 @@
 {% block title %}Proveedores - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-warning mb-0">
-        <i class="fa-solid fa-truck-field me-2"></i>Módulo de Proveedores
-    </h2>
-</div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+            <i class="fa-solid fa-truck-field me-2"></i>Módulo de Proveedores
+        </h2>
+        <!-- Botón que redirige al formulario de registro -->
+        <a href="{{ url_for('formulario_proveedor') }}" class="btn btn-warning fw-bold">
+            <i class="fa-solid fa-plus me-1"></i> Nuevo Proveedor
+        </a>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-dark table-hover align-middle border-secondary">
-        <thead>
-            <tr class="table-secondary text-dark">
-                <th>RUC</th>
-                <th>Empresa</th>
-                <th>Teléfono de Contacto</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for prov in proveedores %}
-            <tr>
-                <td>{{ prov.ruc }}</td>
-                <td><strong>{{ prov.empresa }}</strong></td>
-                <td>{{ prov.telefono }}</td>
-            </tr>
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Tabla de Proveedores -->
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle border-secondary">
+            <thead>
+                <tr class="table-secondary text-dark">
+                    <th>RUC</th>
+                    <th>Empresa</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prov in proveedores %}
+                <tr>
+                    <td>{{ prov.ruc }}</td>
+                    <td><strong>{{ prov.empresa }}</strong></td>
+                    <td>{{ prov.telefono }}</td>
+                    <td>
+                        <span class="badge {% if prov.estado == 'Activo' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ prov.estado }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('cambiar_estado_proveedor', ruc=prov.ruc) }}" class="btn btn-sm btn-outline-light">
+                            Cambiar Estado
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No hay proveedores registrados todavía.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

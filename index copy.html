@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Barbería Hernández{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-3 text-warning fw-bold mb-3">Bienvenido a Barbería Hernández</h1>
+    <p class="lead text-light mb-4">Sistema de gestión integral para la administración de clientes, productos, proveedores y facturación.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{{ url_for('productos') }}" class="btn btn-warning btn-lg fw-bold">Ver Productos</a>
+        <a href="{{ url_for('clientes') }}" class="btn btn-outline-light btn-lg">Ver Clientes</a>
+        <a href="{{ url_for('proveedores') }}" class="btn btn-outline-light btn-lg">Ver Proveedores</a>
+        <a href="{{ url_for('facturacion') }}" class="btn btn-outline-light btn-lg">Ver Facturas</a>
+        <a href="{{ url_for('citas') }}" class="btn btn-outline-light btn-lg">Ver Citas</a>
+    </div>
+</div>
+{% endblock %}

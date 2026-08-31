@@ -75,7 +75,17 @@
     <a class="nav-link" href="#trabajo">Video</a>
 </li>
 
-    <a class="nav-link" href="#quienes">Quienes Somos</a>
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="modulosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Módulos
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="modulosDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('facturacion') }}">Facturación</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('citas') }}">Citas</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('clientes') }}">Clientes</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('productos') }}">Productos</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('proveedores') }}">Proveedores</a></li>
+    </ul>
 </li>
 
     </ul>

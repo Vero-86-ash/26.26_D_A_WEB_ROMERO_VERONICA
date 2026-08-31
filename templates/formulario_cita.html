@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-dark">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-calendar-check"></i> Agendar Nueva Cita</h4>
+                </div>
+                <div class="card-body bg-light">
+                    <!-- Aquí estaba el error. Ya está corregido -->
+                    <form method="POST" action="" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.cliente.label(class="form-label fw-bold text-dark") }}
+                                {{ form.cliente(class="form-control", placeholder="Nombre completo") }}
+                                {% for error in form.cliente.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.telefono.label(class="form-label fw-bold text-dark") }}
+                                {{ form.telefono(class="form-control", placeholder="Ej. 0991234567", oninput="this.value = this.value.replace(/[^0-9]/g, '')", maxlength="10") }}
+                                {% for error in form.telefono.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.fecha.label(class="form-label fw-bold text-dark") }}
+                                {{ form.fecha(class="form-control", type="date") }}
+                                {% for error in form.fecha.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.hora.label(class="form-label fw-bold text-dark") }}
+                                {{ form.hora(class="form-control", type="time") }}
+                                {% for error in form.hora.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                {{ form.barbero.label(class="form-label fw-bold text-dark") }}
+                                {{ form.barbero(class="form-select") }}
+                                {% for error in form.barbero.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.servicio.label(class="form-label fw-bold text-dark") }}
+                                {{ form.servicio(class="form-select") }}
+                                {% for error in form.servicio.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                            <a href="{{ url_for('citas') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

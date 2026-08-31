@@ -4,9 +4,20 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('productos') }}">Productos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('proveedores') }}">Proveedores</a></li>
+                
+                <!-- Menú desplegable de Módulos -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="modulosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Módulos
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulosDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('facturacion') }}">Facturación</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('citas') }}">Citas</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('clientes') }}">Clientes</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('productos') }}">Productos</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('proveedores') }}">Proveedores</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
