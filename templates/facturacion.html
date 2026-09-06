@@ -4,6 +4,7 @@
 
 {% block content %}
 <div class="container mt-4">
+    <h3 class="text-warning fw-bold mb-3">FACTURACIÓN</h3>
     <!-- Botón verde alineado arriba, sin título largo -->
     <div class="mb-4">
         <a href="{{ url_for('nueva_factura') }}" class="btn btn-success fw-bold text-white">
@@ -42,14 +43,25 @@
                         <a href="{{ url_for('detalle_factura', num=f.num) }}" class="btn btn-sm btn-outline-info me-1">
                             <i class="fa-solid fa-eye"></i> Ver
                         </a>
+                        
                         <!-- Botón para cambiar el estado -->
-                        <a href="{{ url_for('cambiar_estado_factura', num=f.num) }}" class="btn btn-sm btn-outline-warning">
+                        <a href="{{ url_for('cambiar_estado_factura', num=f.num) }}" class="btn btn-sm btn-outline-warning me-1">
                             <i class="fa-solid fa-arrows-rotate"></i> Cambiar
+                        </a>
+
+                        <!-- NUEVO: Botón Editar -->
+                        <a href="{{ url_for('editar_factura', num=f.num) }}" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+
+                        <!-- NUEVO: Botón Eliminar con alerta -->
+                        <a href="{{ url_for('borrar_factura', num=f.num) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta factura?');">
+                            <i class="fa-solid fa-trash-can"></i> Eliminar
                         </a>
                     </td>
                 </tr>
                 {% else %}
-                <tr>
+                <tr>   
                     <td colspan="6" class="text-center py-4 text-muted">
                         <em>No hay facturas registradas en este momento.</em>
                     </td>

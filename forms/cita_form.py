@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired, Length, Regexp
 class CitaForm(FlaskForm):
     cliente = StringField('Nombre del Cliente', validators=[
         DataRequired(message="El nombre del cliente es obligatorio."),
-        Regexp(r'^[A-ZÁÉÍÓÚÑ][a-zA-ZáéíóúñÁÉÍÓÚÑ\s]*$', 
-               message="El nombre debe iniciar con mayúscula y contener solo letras.")
+        Regexp(r'^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)+$', 
+               message="Debe ingresar nombre y apellido, y cada uno debe iniciar con mayúscula.")
     ])
     
     telefono = StringField('Teléfono de Contacto', validators=[

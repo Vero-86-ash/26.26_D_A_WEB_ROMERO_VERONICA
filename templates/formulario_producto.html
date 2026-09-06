@@ -1,48 +1,51 @@
 {% extends "base.html" %}
 
-{% block title %}Registrar Proveedor - Barbería Hernández{% endblock %}
+{% block title %}{% if editando %}Editar Producto{% else %}Nuevo Producto{% endif %} - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card bg-dark text-light border-secondary p-4 shadow-sm">
-                <h3 class="text-warning mb-4 text-center">
-                    <i class="fa-solid fa-truck-field me-2"></i>Registrar Nuevo Proveedor
-                </h3>
-                
-                <form method="POST" novalidate>
-                    {{ form.hidden_tag() }}
+        <div class="col-md-8">
+            <div class="card shadow border-dark">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-box"></i> {% if editando %}Editar Producto{% else %}Registrar Nuevo Producto{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body bg-light">
+                    <form method="POST" action="" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.nombre.label(class="form-label fw-bold text-dark") }}
+                            {{ form.nombre(class="form-control " + ("is-invalid" if form.nombre.errors else ""), placeholder="Ej. Cera modeladora") }}
+                            {% for error in form.nombre.errors %}
+                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
 
-                    <div class="mb-3">
-                        {{ form.ruc.label(class="form-label text-light") }}
-                        {{ form.ruc(class="form-control bg-secondary text-light border-0") }}
-                        {% for error in form.ruc.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+                        <div class="mb-3">
+                            {{ form.precio.label(class="form-label fw-bold text-dark") }}
+                            {{ form.precio(class="form-control " + ("is-invalid" if form.precio.errors else ""), placeholder="Ej. 8.50") }}
+                            {% for error in form.precio.errors %}
+                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
 
-                    <div class="mb-3">
-                        {{ form.empresa.label(class="form-label text-light") }}
-                        {{ form.empresa(class="form-control bg-secondary text-light border-0") }}
-                        {% for error in form.empresa.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+                        <div class="mb-3">
+                            {{ form.stock.label(class="form-label fw-bold text-dark") }}
+                            {{ form.stock(class="form-control " + ("is-invalid" if form.stock.errors else ""), placeholder="Ej. 15") }}
+                            {% for error in form.stock.errors %}
+                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
 
-                    <div class="mb-3">
-                        {{ form.telefono.label(class="form-label text-light") }}
-                        {{ form.telefono(class="form-control bg-secondary text-light border-0") }}
-                        {% for error in form.telefono.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="{{ url_for('proveedores') }}" class="btn btn-outline-secondary">Cancelar</a>
-                        {{ form.submit(class="btn btn-warning text-dark fw-bold") }}
-                    </div>
-                </form>
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                            <a href="{{ url_for('productos') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -4,8 +4,12 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Título arriba -->
+    <h3 class="text-warning fw-bold mb-3">CLIENTES</h3>
+    
+    <!-- Botón verde corregido (se quitó el </a> extra que lo rompía) -->
     <div class="mb-4">
-        <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-success fw-bold text-white">
+        <a href="{{ url_for('formulario_cliente') }}" class="btn btn-success fw-bold text-white">
             <i class="fa-solid fa-plus me-1"></i> Nuevo Cliente
         </a>
     </div>
@@ -25,14 +29,25 @@
             <tbody>
                 {% for c in clientes %}
                 <tr>
-                    <td><strong>#{{ c.id }}</strong></td>
+                    <td><strong>{{ c.id }}</strong></td>
                     <td>{{ c.nombre }}</td>
                     <td>{{ c.apellido }}</td>
                     <td>{{ c.telefono }}</td>
                     <td>{{ c.email }}</td>
                     <td class="text-center">
-                        <a href="{{ url_for('editar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-warning">
+                        <!-- Botón Ver -->
+                        <a href="{{ url_for('detalle_cliente', id=c.id) }}" class="btn btn-sm btn-outline-info me-1">
+                            <i class="fa-solid fa-eye"></i> Ver
+                        </a>
+                        
+                        <!-- Botón Editar -->
+                        <a href="{{ url_for('editar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-warning me-1">
                             <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+                        
+                        <!-- Botón Borrar (con alerta de confirmación) -->
+                        <a href="{{ url_for('eliminar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar a {{ c.nombre }}?');">
+                            <i class="fa-solid fa-trash-can"></i> Borrar
                         </a>
                     </td>
                 </tr>

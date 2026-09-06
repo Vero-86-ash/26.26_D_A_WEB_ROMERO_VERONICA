@@ -14,14 +14,24 @@
                     <form method="POST" action="" novalidate>
                         {{ form.hidden_tag() }}
                         
-                        <div class="mb-3">
+            <div class="mb-3 mt-3">
                             {{ form.cliente.label(class="form-label fw-bold") }}
-                            {{ form.cliente(class="form-control", placeholder="Ej. Carlos Mendoza") }}
-                            {% for error in form.cliente.errors %}
-                                <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
-                            {% endfor %}
+                            
+                            {{ form.cliente(
+                                class="form-control", 
+                                placeholder="Ej. Carlos Mendoza",
+                                pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñÁÉÍÓÚÑ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñÁÉÍÓÚÑ]+)+$",
+                                oninput="
+                                    this.value = this.value.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, ''); 
+                                    if(this.checkValidity()){ this.classList.remove('is-invalid'); } 
+                                    else { this.classList.add('is-invalid'); }
+                                "
+                            ) }}
+                            
+                            <div class="invalid-feedback fw-bold">
+                                Debe ingresar Nombre y Apellido iniciando con mayúscula (Ej. Cristian Mendoza). No ingrese números.
+                            </div>
                         </div>
-
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 {{ form.metodo_pago.label(class="form-label fw-bold") }}

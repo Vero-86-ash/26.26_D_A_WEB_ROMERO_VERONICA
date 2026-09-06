@@ -1,65 +1,111 @@
 {% extends "base.html" %}
 
+{% block title %}Agendar Cita - Barbería Hernández{% endblock %}
+
 {% block content %}
+<!-- ESTILO DE EMERGENCIA PARA FORZAR EL BORDE ROJO DE BOOTSTRAP -->
+<style>
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow border-dark">
                 <div class="card-header bg-dark text-white text-center">
-                    <h4 class="mb-0"><i class="fas fa-calendar-check"></i> Agendar Nueva Cita</h4>
+                    <h4 class="mb-0"><i class="fas fa-calendar-check"></i> {% if editando %}Editar Cita{% else %}Agendar Nueva Cita{% endif %}</h4>
                 </div>
                 <div class="card-body bg-light">
-                    <!-- Aquí estaba el error. Ya está corregido -->
                     <form method="POST" action="" novalidate>
                         {{ form.hidden_tag() }}
                         
                         <div class="row mb-3">
+                            <!-- Campo Cliente -->
                             <div class="col-md-6">
                                 {{ form.cliente.label(class="form-label fw-bold text-dark") }}
-                                {{ form.cliente(class="form-control", placeholder="Nombre completo") }}
+                                
+                                {{ form.cliente(class="form-control " + ("is-invalid" if form.cliente.errors else ""), placeholder="Ej. Carlos Mendoza") }}
+                                
                                 {% for error in form.cliente.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
+
+                            <!-- Campo Teléfono -->
                             <div class="col-md-6">
                                 {{ form.telefono.label(class="form-label fw-bold text-dark") }}
-                                {{ form.telefono(class="form-control", placeholder="Ej. 0991234567", oninput="this.value = this.value.replace(/[^0-9]/g, '')", maxlength="10") }}
+                                
+                                {{ form.telefono(class="form-control " + ("is-invalid" if form.telefono.errors else ""), placeholder="Ej. 0991234567", oninput="this.value = this.value.replace(/[^0-9]/g, '')", maxlength="10") }}
+                                
                                 {% for error in form.telefono.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
 
                         <div class="row mb-3">
+                            <!-- Campo Fecha -->
                             <div class="col-md-6">
                                 {{ form.fecha.label(class="form-label fw-bold text-dark") }}
-                                {{ form.fecha(class="form-control", type="date") }}
+                                
+                                {{ form.fecha(class="form-control " + ("is-invalid" if form.fecha.errors else ""), type="date") }}
+                                
                                 {% for error in form.fecha.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
+
+                            <!-- Campo Hora -->
                             <div class="col-md-6">
                                 {{ form.hora.label(class="form-label fw-bold text-dark") }}
-                                {{ form.hora(class="form-control", type="time") }}
+                                
+                                {{ form.hora(class="form-control " + ("is-invalid" if form.hora.errors else ""), type="time") }}
+                                
                                 {% for error in form.hora.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
 
                         <div class="row mb-4">
+                            <!-- Campo Barbero -->
                             <div class="col-md-6">
                                 {{ form.barbero.label(class="form-label fw-bold text-dark") }}
-                                {{ form.barbero(class="form-select") }}
+                                
+                                {{ form.barbero(class="form-select " + ("is-invalid" if form.barbero.errors else "")) }}
+                                
                                 {% for error in form.barbero.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
+
+                            <!-- Campo Servicio (Corregido y completo) -->
                             <div class="col-md-6">
                                 {{ form.servicio.label(class="form-label fw-bold text-dark") }}
-                                {{ form.servicio(class="form-select") }}
+                                
+                                {{ form.servicio(class="form-select " + ("is-invalid" if form.servicio.errors else "")) }}
+                                
                                 {% for error in form.servicio.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
+                                        {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -74,4 +120,33 @@
         </div>
     </div>
 </div>
+
+<!-- SCRIPT DE VALIDACIÓN EN TIEMPO REAL PARA EL NOMBRE -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputCliente = document.querySelector("input[name='cliente']");
+        
+        if (inputCliente) {
+            let feedbackDiv = document.createElement("div");
+            feedbackDiv.className = "invalid-feedback fw-bold text-danger d-block mt-1";
+            inputCliente.parentNode.appendChild(feedbackDiv);
+
+            inputCliente.addEventListener("input", function() {
+                const valor = inputCliente.value.trim();
+                const patron = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)+$/;
+
+                if (valor === "") {
+                    inputCliente.classList.remove("is-invalid");
+                    feedbackDiv.textContent = "";
+                } else if (!patron.test(valor)) {
+                    inputCliente.classList.add("is-invalid");
+                    feedbackDiv.textContent = "Debe ingresar nombre y apellido, y cada uno debe iniciar con mayúscula.";
+                } else {
+                    inputCliente.classList.remove("is-invalid");
+                    feedbackDiv.textContent = "";
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

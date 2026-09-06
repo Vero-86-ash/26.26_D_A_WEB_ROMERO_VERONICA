@@ -321,3 +321,9 @@ input.is-valid, textarea.is-valid {
     border-color: #198754 !important;
     box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25) !important;
 }
+/* Cambia el color del texto gris apagado a un tono más visible */
+.section-subheading.text-muted {
+  color: #333333 !important; 
+  display: block !important;
+  visibility: visible !important;
+}

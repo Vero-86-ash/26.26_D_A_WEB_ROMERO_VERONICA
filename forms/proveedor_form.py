@@ -13,7 +13,7 @@ class ProveedorForm(FlaskForm):
         DataRequired(message="El nombre de la empresa es obligatorio."),
         Length(min=3, max=100, message="El nombre debe tener al menos 3 caracteres."),
         Regexp(r'^(?!\s)(?!.*[\s-]{2})[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\.\,\-]+(?<!\s)$', 
-               message="Ingrese un nombre de empresa válido (evite texto aleatorio o símbolos inválidos).")
+                message="Ingrese un nombre de empresa válido (evite texto aleatorio o símbolos inválidos).")
     ])
     
     telefono = StringField("Teléfono de Contacto", validators=[

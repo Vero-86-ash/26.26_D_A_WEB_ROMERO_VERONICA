@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-white fw-bold">CITAS</h2>
+    </div>
     <div class="mb-4">
         <a href="{{ url_for('formulario_cita') }}" class="btn btn-success fw-bold text-white">
             <i class="fa-solid fa-plus me-1"></i> Agendar Cita
@@ -41,9 +44,22 @@
                         {% endif %}
                     </td>
                     <td class="text-center">
-                        <a href="{{ url_for('cambiar_estado_cita', id=c.id) }}" class="btn btn-sm btn-outline-info">
-                            <i class="fa-solid fa-arrows-rotate"></i> Cambiar
-                        </a>
+                        <div class="btn-group" role="group">
+                            <!-- Botón Cambiar Estado -->
+                            <a href="{{ url_for('cambiar_estado_cita', id=c.id) }}" class="btn btn-sm btn-outline-info" title="Cambiar Estado">
+                                <i class="fa-solid fa-arrows-rotate"></i> Cambiar
+                            </a>
+                            
+                            <!-- Botón Editar -->
+                            <a href="{{ url_for('editar_cita', id=c.id) }}" class="btn btn-sm btn-outline-warning" title="Editar Cita">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </a>
+                            
+                            <!-- Botón Eliminar -->
+                            <a href="{{ url_for('eliminar_cita', id=c.id) }}" class="btn btn-sm btn-outline-danger" title="Eliminar Cita" onclick="return confirm('¿Está seguro de que desea eliminar esta cita?');">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 {% else %}

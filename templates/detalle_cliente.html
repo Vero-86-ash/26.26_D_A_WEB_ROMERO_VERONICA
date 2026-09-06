@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Detalle del Cliente{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow border-secondary mx-auto" style="max-width: 500px;">
+        <div class="card-header bg-dark text-warning text-center">
+            <h4 class="mb-0"><i class="fa-solid fa-user me-2"></i>Detalle del Cliente</h4>
+        </div>
+        <div class="card-body bg-light text-dark fs-5">
+            <p class="mb-2"><strong>ID:</strong> <span class="badge bg-secondary">{{ cliente.id }}</span></p>
+            <p class="mb-2"><strong>Nombre:</strong> {{ cliente.nombre }} {{ cliente.apellido }}</p>
+            <p class="mb-2"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+            <p class="mb-2"><strong>Correo Electrónico:</strong> {{ cliente.email }}</p>
+            
+            <div class="text-end mt-4">
+                <a href="{{ url_for('clientes') }}" class="btn btn-secondary fw-bold">Volver a Clientes</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
