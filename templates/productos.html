@@ -17,10 +17,14 @@
         <table class="table table-dark table-hover align-middle border-secondary shadow">
             <thead>
                 <tr class="table-secondary text-dark">
-                    <th>Código</th>
-                    <th>Nombre del Producto</th>
+                    <th>ID</th>
+                    <th>Código de Barras</th>
+                    <th>Nombre</th>
                     <th>Precio</th>
+                    <th>Costo</th>
                     <th>Stock</th>
+                    <th>Stock Mín.</th>
+                    <th>Unidad</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -28,15 +32,19 @@
                 {% for p in lista_productos %}
                 <tr>
                     <td><strong>{{ p.id }}</strong></td>
+                    <td class="text-light fw-bold">{{ p.codigo_barras }}</td>
                     <td>{{ p.nombre }}</td>
                     <td class="text-warning fw-bold">${{ "%.2f"|format(p.precio) }}</td>
+                    <td class="text-light">${{ "%.2f"|format(p.costo_compra) }}</td>
                     <td>
-                        {% if p.stock > 5 %}
+                        {% if p.stock > (p.stock_minimo if p.stock_minimo is not none else 5) %}
                             <span class="badge bg-success">{{ p.stock }} unidades</span>
                         {% else %}
                             <span class="badge bg-danger">Bajo stock: {{ p.stock }}</span>
                         {% endif %}
                     </td>
+                    <td>{{ p.stock_minimo }}</td>
+                    <td>{{ p.unidad_medida }}</td>
                     <td class="text-center">
                         <a href="{{ url_for('detalle_producto', id=p.id) }}" class="btn btn-sm btn-outline-info me-1" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
@@ -51,7 +59,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
+                    <td colspan="9" class="text-center py-4 text-muted">
                         <em>No hay productos registrados en este momento.</em>
                     </td>
                 </tr>

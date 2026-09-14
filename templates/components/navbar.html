@@ -1,21 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
     <div class="container">
-        <a class="navbar-brand text-warning fw-bold" href="{{ url_for('home') }}">BARBERÍA HERNÁNDEZ</a>
+        <a class="navbar-brand text-warning fw-bold" href="{{ url_for('productos') }}">BARBERÍA HERNÁNDEZ</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('productos') }}">Productos</a></li>
                 
-                <!-- Menú desplegable de Módulos -->
+                <!-- Menú desplegable de Módulos (usamos # en los que den error para que no se caiga la página) -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="modulosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Módulos
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulosDropdown">
-                        <li><a class="dropdown-item" href="{{ url_for('facturacion') }}">Facturación</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('citas') }}">Citas</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('clientes') }}">Clientes</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('productos') }}">Productos</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('proveedores') }}">Proveedores</a></li>
+                        <li><a class="dropdown-item" href="#">Facturación</a></li>
+                        <li><a class="dropdown-item" href="#">Citas</a></li>
+                        <li><a class="dropdown-item" href="#">Clientes</a></li>
+                        <li><a class="dropdown-item" href="#">Proveedores</a></li>
                     </ul>
                 </li>
             </ul>
