@@ -1,7 +1,25 @@
+# Entornos virtuales
 venv/
 ENV/
+env/
+.env
+
+# Caché de Python y compilados
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.pytest_cache/
+
+# Editores y entornos de desarrollo
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+
+# Carpeta temporal de descargas de la máquina virtual o local
+downloads/
+
+# Archivos de caché del sistema operativo
+.DS_Store
+Thumbs.db
