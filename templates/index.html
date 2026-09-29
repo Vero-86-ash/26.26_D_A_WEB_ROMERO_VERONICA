@@ -1,3 +1,15 @@
+ <!-- Header Principal con Imagen de Fondo -->
+    <header id="titulo-principal" class="header-fondo-imagen">
+        <div class="header-overlay d-flex align-items-center justify-content-center text-center">
+            <div class="container py-5">
+                <h1 class="header-title display-4 fw-bold text-white mb-2">Barbería Hernández</h1>
+                <h2 class="header-subtitle h5 text-warning font-monospace fw-semibold">
+                    StyleCare — Estilo moderno para cabello y cuidado facial.
+                </h2>
+            </div>
+        </div>
+    </header>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,17 +28,8 @@
 </head>
 <body class="bg-black text-white text-center">
 
-    <!-- Header -->
-    <header id="titulo-principal" class="header-fondo-imagen">
-        <div class="header-overlay d-flex align-items-center justify-content-center">
-            <div class="container py-5">
-                <h1 class="header-title fw-bold text-white mb-2">Barbería Hernández</h1>
-                <h2 class="header-subtitle h5 text-warning font-monospace fw-semibold">
-                    StyleCare — Estilo moderno para cabello y cuidado facial.
-                </h2>
-            </div>
-        </div>
-    </header>
+    {% include 'components/navbar.html' %}
+
    <!-- Navegación -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow" id="mainNav">
     <div class="container">
@@ -98,14 +101,12 @@
                     <h2 class="section-title mb-4">Quiénes Somos</h2>
                     <div class="contenido-quienes-bloque text-light">
                         <p>
-                            Barbería Hernández es un emprendimiento dedicado al cuidado integral de la imagen
-                            personal mediante servicios profesionales de barbería y cuidado facial. Nuestro
-                            objetivo es brindar a cada cliente una experiencia de calidad, combinando técnicas
-                            modernas, atención personalizada y productos especializados para el cuidado del
-                            cabello y la piel.
+                            
                         </p>
                         <p class="mb-4">
-                            Contamos con profesionales capacitados que buscan satisfacer las necesidades de nuestros clientes, ayudándolos a mejorar su apariencia y fortalecer su confianza. Además, promovemos un ambiente cómodo, moderno y juvenil donde cada persona puede sentirse segura y bien atendida.
+                            En Barbería Hernández cuidamos tu imagen con cortes modernos, barba y cuidado facial. 
+                            Ofrecemos atención personalizada, productos de calidad y un ambiente cómodo para que disfrutes
+                            una experiencia diferente y salgas con un estilo que te represente.
                         </p>
                         
                         <div class="contenedor-img-quienes-reducida">

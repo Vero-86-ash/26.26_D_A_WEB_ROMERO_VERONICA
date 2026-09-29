@@ -3,54 +3,158 @@
 {% block title %}{% if editando %}Editar Proveedor{% else %}Nuevo Proveedor{% endif %} - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Título superior solicitado -->
-    <div class="mb-3">
-        <h4 class="text-secondary fw-bold">Proveedores</h4>
-    </div>
-
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-dark">
-                <div class="card-header bg-dark text-white text-center">
-                    <h4 class="mb-0">
-                        <i class="fas fa-truck"></i> {% if editando %}Editar Proveedor{% else %}Registrar Nuevo Proveedor{% endif %}
-                    </h4>
+        <div class="col-md-9 col-lg-8">
+            <div class="card bg-secondary text-white border-0 shadow-lg rounded-3 p-4">
+                
+                <!-- Encabezado de la tarjeta -->
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-dark text-warning rounded-circle mb-2 border border-warning shadow-sm" style="width: 70px; height: 70px;">
+                        <i class="bi bi-truck fs-1"></i>
+                    </div>
+                    <h3 class="text-warning fw-bold mb-1">
+                        {% if editando %}Editar Proveedor{% else %}Registrar Nuevo Proveedor{% endif %}
+                    </h3>
+                    <p class="text-light opacity-75 small">Gestión y control de proveedores comerciales</p>
                 </div>
-                <div class="card-body bg-light">
-                    <form method="POST" action="" novalidate>
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="mb-3">
-                            {{ form.ruc.label(class="form-label fw-bold text-dark") }}
-                            {{ form.ruc(class="form-control " + ("is-invalid" if form.ruc.errors else ""), placeholder="Ej. 1790011223001") }}
+
+                <!-- Mensajes Flash -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show py-2" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- RUC y Razón Social / Empresa -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.ruc.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-card-heading"></i></span>
+                                {{ form.ruc(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.ruc.errors else ""), placeholder="1790011223001", maxlength="13", inputmode="numeric", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                            </div>
+                            <small class="text-light opacity-50 d-block mt-1">13 dígitos numéricos (RUC de Ecuador).</small>
                             {% for error in form.ruc.errors %}
-                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
                             {% endfor %}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.empresa.label(class="form-label fw-bold text-dark") }}
-                            {{ form.empresa(class="form-control " + ("is-invalid" if form.empresa.errors else ""), placeholder="Ej. Distribuidora BarberXP") }}
+                        <div class="col-md-6 mb-3">
+                            {{ form.empresa.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-building"></i></span>
+                                {{ form.empresa(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.empresa.errors else ""), placeholder="Ej. Distribuidora BarberXP", autocapitalize="words") }}
+                            </div>
                             {% for error in form.empresa.errors %}
-                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
                             {% endfor %}
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            {{ form.telefono.label(class="form-label fw-bold text-dark") }}
-                            {{ form.telefono(class="form-control " + ("is-invalid" if form.telefono.errors else ""), placeholder="Ej. 022345678") }}
+                    <!-- Teléfono Empresa y Correo Electrónico -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.telefono.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-telephone"></i></span>
+                                {{ form.telefono(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.telefono.errors else ""), placeholder="022345678", maxlength="10", inputmode="numeric", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                            </div>
                             {% for error in form.telefono.errors %}
-                                <div class="invalid-feedback fw-bold text-danger d-block mt-1">{{ error }}</div>
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
                             {% endfor %}
                         </div>
 
-                        <div class="d-grid gap-2">
-                            {{ form.submit(class="btn btn-dark btn-lg") }}
-                            <a href="{{ url_for('proveedores') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <div class="col-md-6 mb-3">
+                            {{ form.email.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-envelope"></i></span>
+                                {{ form.email(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.email.errors else ""), placeholder="proveedor@empresa.com") }}
+                            </div>
+                            {% for error in form.email.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <!-- Dirección y Ciudad -->
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            {{ form.direccion.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-geo-alt"></i></span>
+                                {{ form.direccion(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.direccion.errors else ""), placeholder="Ej. Av. Principal y Secundaria") }}
+                            </div>
+                            {% for error in form.direccion.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ form.ciudad.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-pin-map"></i></span>
+                                {{ form.ciudad(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.ciudad.errors else ""), placeholder="Ej. Quito", autocapitalize="words") }}
+                            </div>
+                            {% for error in form.ciudad.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Persona de Contacto, Teléfono y Días de Crédito -->
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            {{ form.nombre_contacto.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-person"></i></span>
+                                {{ form.nombre_contacto(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.nombre_contacto.errors else ""), placeholder="Ej. Juan Pérez", autocapitalize="words") }}
+                            </div>
+                            {% for error in form.nombre_contacto.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ form.telefono_contacto.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-phone"></i></span>
+                                {{ form.telefono_contacto(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.telefono_contacto.errors else ""), placeholder="0999999999", maxlength="10", inputmode="numeric", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                            </div>
+                            {% for error in form.telefono_contacto.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            {{ form.dias_credito.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-calendar3"></i></span>
+                                {{ form.dias_credito(class="form-control bg-dark text-white border-secondary" + (" is-invalid" if form.dias_credito.errors else ""), placeholder="30", maxlength="3", inputmode="numeric", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                            </div>
+                            {% for error in form.dias_credito.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-grid gap-2 mt-4">
+                        {{ form.submit(class="btn btn-warning fw-bold text-dark py-2 shadow-sm") }}
+                        <a href="{{ url_for('proveedores') }}" class="btn btn-outline-light py-2">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar y Volver
+                        </a>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

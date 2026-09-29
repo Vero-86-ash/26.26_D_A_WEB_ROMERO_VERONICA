@@ -1,151 +1,271 @@
 {% extends "base.html" %}
 
-{% block title %}Agendar Cita - Barbería Hernández{% endblock %}
+{% block title %}{% if editando %}Editar Cita #{{ cita_id }}{% else %}Agendar Cita{% endif %} - Barbería Hernández{% endblock %}
 
 {% block content %}
-<!-- ESTILO DE EMERGENCIA PARA FORZAR EL BORDE ROJO DE BOOTSTRAP -->
-<style>
-    .form-control.is-invalid, .form-select.is-invalid {
-        border-color: #dc3545 !important;
-        padding-right: calc(1.5em + 0.75rem);
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right calc(0.375em + 0.1875rem) center;
-        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-    }
-</style>
-
-<div class="container mt-5">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-dark">
-                <div class="card-header bg-dark text-white text-center">
-                    <h4 class="mb-0"><i class="fas fa-calendar-check"></i> {% if editando %}Editar Cita{% else %}Agendar Nueva Cita{% endif %}</h4>
+        <div class="col-md-8 col-lg-7">
+            <div class="card bg-secondary text-white border-0 shadow-lg rounded-3 p-4">
+                
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-dark text-warning rounded-circle mb-2 border border-warning shadow-sm" style="width: 70px; height: 70px;">
+                        <i class="bi {% if editando %}bi-pencil-square{% else %}bi-calendar-plus{% endif %} fs-1"></i>
+                    </div>
+                    <h3 class="text-warning fw-bold mb-1">
+                        {% if editando %}Editar Cita #{{ cita_id }}{% else %}Agendar Nueva Cita{% endif %}
+                    </h3>
+                    <p class="text-light opacity-75 small">
+                        {% if editando %}Modifique los detalles de la reserva de servicio{% else %}Complete los datos correspondientes a su reserva y forma de pago{% endif %}
+                    </p>
                 </div>
-                <div class="card-body bg-light">
-                    <form method="POST" action="" novalidate>
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="row mb-3">
-                            <!-- Campo Cliente -->
-                            <div class="col-md-6">
-                                {{ form.cliente.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.cliente(class="form-control " + ("is-invalid" if form.cliente.errors else ""), placeholder="Ej. Carlos Mendoza") }}
-                                
-                                {% for error in form.cliente.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
 
-                            <!-- Campo Teléfono -->
-                            <div class="col-md-6">
-                                {{ form.telefono.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.telefono(class="form-control " + ("is-invalid" if form.telefono.errors else ""), placeholder="Ej. 0991234567", oninput="this.value = this.value.replace(/[^0-9]/g, '')", maxlength="10") }}
-                                
-                                {% for error in form.telefono.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <!-- Campo Fecha -->
-                            <div class="col-md-6">
-                                {{ form.fecha.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.fecha(class="form-control " + ("is-invalid" if form.fecha.errors else ""), type="date") }}
-                                
-                                {% for error in form.fecha.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Campo Hora -->
-                            <div class="col-md-6">
-                                {{ form.hora.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.hora(class="form-control " + ("is-invalid" if form.hora.errors else ""), type="time") }}
-                                
-                                {% for error in form.hora.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <!-- Campo Barbero -->
-                            <div class="col-md-6">
-                                {{ form.barbero.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.barbero(class="form-select " + ("is-invalid" if form.barbero.errors else "")) }}
-                                
-                                {% for error in form.barbero.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Campo Servicio (Corregido y completo) -->
-                            <div class="col-md-6">
-                                {{ form.servicio.label(class="form-label fw-bold text-dark") }}
-                                
-                                {{ form.servicio(class="form-select " + ("is-invalid" if form.servicio.errors else "")) }}
-                                
-                                {% for error in form.servicio.errors %}
-                                    <div class="invalid-feedback fw-bold text-danger d-block mt-1">
-                                        {{ error }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            {{ form.submit(class="btn btn-dark btn-lg") }}
-                            <a href="{{ url_for('citas') }}" class="btn btn-outline-secondary">Cancelar</a>
-                        </div>
-                    </form>
+                <!-- Panel informativo de horario comercial -->
+                <div class="alert alert-dark border-secondary d-flex align-items-center mb-4 py-2 px-3 rounded-2">
+                    <i class="bi bi-clock-history text-warning fs-5 me-3"></i>
+                    <div>
+                        <span class="fw-bold text-warning d-block">Horario de Atención:</span>
+                        <span class="small text-light">Lunes a Domingo de 09:00 a 21:00. No se admiten reservas fuera de este rango.</span>
+                    </div>
                 </div>
+
+                <!-- Mensajes Flash del Sistema -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show py-2" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <!-- Alertas de errores de validación -->
+                {% if form.errors %}
+                  <div class="alert alert-danger py-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor verifique los campos marcados en rojo.
+                  </div>
+                {% endif %}
+
+                <!-- Formulario -->
+                <form method="POST" action="{% if editando %}{{ url_for('editar_cita', id=cita_id) }}{% else %}{{ url_for('formulario_cita') }}{% endif %}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <!-- Campo Cliente -->
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            {{ form.cliente.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-person"></i></span>
+                                {{ form.cliente(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.cliente.errors else ""), placeholder="Ej. Carlos Mendoza", autocapitalize="words", readonly=editando) }}
+                            </div>
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Campo Teléfono -->
+                        <div class="col-md-6">
+                            {{ form.telefono.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-telephone"></i></span>
+                                {{ form.telefono(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.telefono.errors else ""), placeholder="0989876543", inputmode="numeric", maxlength="10", oninput="this.value = this.value.replace(/[^0-9]/g, '')", readonly=editando) }}
+                            </div>
+                            <small class="text-light opacity-50 d-block mt-1">Solo dígitos numéricos (máximo 10).</small>
+                            {% for error in form.telefono.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <!-- Campo Fecha -->
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            {{ form.fecha.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-calendar-event"></i></span>
+                                {{ form.fecha(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.fecha.errors else ""), type="date", required=True) }}
+                            </div>
+                            {% for error in form.fecha.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Campo Hora -->
+                        <div class="col-md-6">
+                            {{ form.hora.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-clock"></i></span>
+                                {{ form.hora(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.hora.errors else ""), type="time", id="hora_input", min="09:00", max="21:00", required=True) }}
+                            </div>
+                            <small class="text-light opacity-50 d-block mt-1">Rango permitido: 09:00 a 21:00.</small>
+                            <div id="hora_error_feedback" class="text-danger small mt-1 d-none">
+                                <i class="bi bi-exclamation-circle me-1"></i>La hora seleccionada debe estar comprendida entre las 09:00 y las 21:00.
+                            </div>
+                            {% for error in form.hora.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <!-- Campo Barbero -->
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            {{ form.barbero.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-scissors"></i></span>
+                                {{ form.barbero(class="form-select bg-dark text-white border-secondary " + ("is-invalid" if form.barbero.errors else ""), required=True) }}
+                            </div>
+                            {% for error in form.barbero.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Campo Servicio -->
+                        <div class="col-md-6">
+                            {{ form.servicio.label(class="form-label fw-semibold text-white") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-tag"></i></span>
+                                {{ form.servicio(class="form-select bg-dark text-white border-secondary " + ("is-invalid" if form.servicio.errors else ""), required=True) }}
+                            </div>
+                            {% for error in form.servicio.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN DE SELECCIÓN Y CONFIRMACIÓN DE PAGO (3 OPCIONES) -->
+                    {% if not editando %}
+                    <div class="card bg-dark text-white border border-secondary p-3 rounded mb-3 shadow-sm">
+                        <label class="form-label fw-semibold text-warning mb-2">
+                            <i class="bi bi-wallet2 me-1"></i> Selección de Método de Pago:
+                        </label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-secondary text-warning border-secondary"><i class="bi bi-credit-card-2-front"></i></span>
+                            <select name="metodo_pago" id="selectMetodoPagoCita" class="form-select bg-dark text-white border-secondary fw-semibold">
+                                <option value="Efectivo en Barbería" selected>Efectivo en Barbería (Pago al recibir la atención)</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria (Banco Pichincha)</option>
+                                <option value="Código QR / Deuna">Código QR / Deuna</option>
+                            </select>
+                        </div>
+
+                        <!-- Detalle Transferencia Bancaria -->
+                        <div id="infoTransferenciaCita" class="p-3 bg-secondary bg-opacity-25 border border-secondary rounded mb-2 d-none">
+                            <h6 class="text-warning fw-bold mb-2 small"><i class="bi bi-bank me-1"></i> Datos Bancarios - Barbería Hernández</h6>
+                            <ul class="list-unstyled small mb-3 text-light" style="font-size: 0.85rem;">
+                                <li><strong>Banco:</strong> Banco Pichincha (Cuenta de Ahorros)</li>
+                                <li><strong>Número de Cuenta:</strong> 2209876543</li>
+                                <li><strong>Beneficiario:</strong> Hernández Barbería Studio</li>
+                                <li><strong>C.I. / RUC:</strong> 1723456789</li>
+                            </ul>
+                            <label class="form-label text-warning small fw-bold mb-1">Nº de Comprobante / Referencia de Transferencia:</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-receipt"></i></span>
+                                <input type="text" name="comprobante_pago" id="inputComprobanteTransf" class="form-control bg-dark text-white border-secondary font-monospace" placeholder="Ej: PICH-984321">
+                            </div>
+                        </div>
+
+                        <!-- Detalle Pago QR / Deuna -->
+                        <div id="infoQRCita" class="p-3 bg-secondary bg-opacity-25 border border-secondary rounded mb-2 d-none text-center">
+                            <h6 class="text-warning fw-bold mb-2 small"><i class="bi bi-qr-code-scan me-1"></i> Pago Inmediato con Deuna / QR</h6>
+                            <p class="small text-light mb-2">Escanea el código QR en caja o transfiere directamente al número registrado <strong>0999999999</strong> y coloca el código de transacción abajo:</p>
+                            <div class="input-group w-75 mx-auto">
+                                <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-hash"></i></span>
+                                <input type="text" name="comprobante_pago_qr" id="inputComprobanteQR" class="form-control bg-dark text-white border-secondary font-monospace text-center" placeholder="Código de transacción Deuna">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Campo Notas del Cliente -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-white">Notas o Requerimientos Especiales (Opcional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-chat-left-text"></i></span>
+                            {% if form.notas_cliente is defined %}
+                                {{ form.notas_cliente(class="form-control bg-dark text-white border-secondary", rows="2", placeholder="Detalles particulares del servicio o solicitud al barbero...") }}
+                            {% else %}
+                                <textarea name="notas_cliente" class="form-control bg-dark text-white border-secondary", rows="2" placeholder="Detalles particulares del servicio o solicitud al barbero..."></textarea>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold text-dark py-2 shadow-sm">
+                            <i class="bi {% if editando %}bi-check-lg{% else %}bi-check2-circle{% endif %} me-1"></i>
+                            {% if editando %}Guardar Cambios{% else %}Agendar Cita{% endif %}
+                        </button>
+                        <a href="{{ url_for('citas') }}" class="btn btn-outline-light py-2">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SCRIPT DE VALIDACIÓN EN TIEMPO REAL PARA EL NOMBRE -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Formato Capitalizado automático para el nombre del cliente
         const inputCliente = document.querySelector("input[name='cliente']");
-        
-        if (inputCliente) {
-            let feedbackDiv = document.createElement("div");
-            feedbackDiv.className = "invalid-feedback fw-bold text-danger d-block mt-1";
-            inputCliente.parentNode.appendChild(feedbackDiv);
-
+        if (inputCliente && !inputCliente.readOnly) {
             inputCliente.addEventListener("input", function() {
-                const valor = inputCliente.value.trim();
-                const patron = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)+$/;
+                this.value = this.value.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+            });
+        }
 
-                if (valor === "") {
-                    inputCliente.classList.remove("is-invalid");
-                    feedbackDiv.textContent = "";
-                } else if (!patron.test(valor)) {
-                    inputCliente.classList.add("is-invalid");
-                    feedbackDiv.textContent = "Debe ingresar nombre y apellido, y cada uno debe iniciar con mayúscula.";
-                } else {
-                    inputCliente.classList.remove("is-invalid");
-                    feedbackDiv.textContent = "";
+        // Validación estricta del horario en el Front-end (09:00 a 21:00)
+        const horaInput = document.getElementById("hora_input");
+        const horaError = document.getElementById("hora_error_feedback");
+
+        if (horaInput) {
+            horaInput.addEventListener("change", function() {
+                const valor = this.value;
+                if (valor) {
+                    if (valor < "09:00" || valor > "21:00") {
+                        horaInput.classList.add("is-invalid");
+                        if (horaError) horaError.classList.remove("d-none");
+                        this.value = "";
+                    } else {
+                        horaInput.classList.remove("is-invalid");
+                        if (horaError) horaError.classList.add("d-none");
+                    }
                 }
             });
+        }
+
+        // Control dinámico de las 3 formas de pago
+        const selectMetodo = document.getElementById('selectMetodoPagoCita');
+        const infoTransf = document.getElementById('infoTransferenciaCita');
+        const infoQR = document.getElementById('infoQRCita');
+        const inputTransf = document.getElementById('inputComprobanteTransf');
+        const inputQR = document.getElementById('inputComprobanteQR');
+
+        if (selectMetodo) {
+            function actualizarVistaPago() {
+                const val = selectMetodo.value;
+                if (val === 'Transferencia Bancaria') {
+                    infoTransf.classList.remove('d-none');
+                    infoQR.classList.add('d-none');
+                    inputTransf.setAttribute('name', 'comprobante_pago');
+                    if (inputQR) inputQR.removeAttribute('name');
+                } else if (val === 'Código QR / Deuna') {
+                    infoQR.classList.remove('d-none');
+                    infoTransf.classList.add('d-none');
+                    inputQR.setAttribute('name', 'comprobante_pago');
+                    if (inputTransf) inputTransf.removeAttribute('name');
+                } else {
+                    infoTransf.classList.add('d-none');
+                    infoQR.classList.add('d-none');
+                    if (inputTransf) inputTransf.removeAttribute('name');
+                    if (inputQR) inputQR.removeAttribute('name');
+                }
+            }
+
+            selectMetodo.addEventListener('change', actualizarVistaPago);
+            actualizarVistaPago();
         }
     });
 </script>

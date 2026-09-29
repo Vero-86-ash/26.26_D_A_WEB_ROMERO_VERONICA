@@ -1,71 +1,195 @@
 {% extends "base.html" %}
 
-{% block title %}Productos - Barbería Hernández{% endblock %}
+{% block title %}Gestión de Productos - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-white fw-bold">PRODUCTOS</h2>
-    </div>
-    <div class="mb-4">
-        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-success fw-bold text-white">
-            <i class="fa-solid fa-plus me-1"></i> Nuevo Producto
+<style>
+    /* 1. Bloqueo de parpadeo: reserva el espacio exacto de la imagen */
+    .img-thumb-box {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        min-height: 46px;
+        background-color: #1a1e21;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .img-thumb-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* 2. Estabilidad de la tabla */
+    .table td, .table th {
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .table td.col-nombre {
+        white-space: normal;
+        min-width: 220px;
+    }
+
+    /* 3. Botones de acción limpios y consistentes */
+    .btn-action-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="container my-5">
+    <!-- Encabezado -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <h2 class="text-white fw-bold mb-1">
+                <i class="bi bi-box-seam me-2 text-warning"></i>Gestión de Productos
+            </h2>
+            <p class="text-light opacity-75 mb-0">Control de inventario, costos, precios e imágenes de la barbería.</p>
+        </div>
+        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-warning fw-bold text-dark shadow px-3 py-2 mt-2 mt-md-0">
+            <i class="bi bi-plus-circle me-1"></i> + Nuevo Producto
         </a>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-dark table-hover align-middle border-secondary shadow">
-            <thead>
-                <tr class="table-secondary text-dark">
-                    <th>ID</th>
-                    <th>Código de Barras</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Costo</th>
-                    <th>Stock</th>
-                    <th>Stock Mín.</th>
-                    <th>Unidad</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in lista_productos %}
-                <tr>
-                    <td><strong>{{ p.id }}</strong></td>
-                    <td class="text-light fw-bold">{{ p.codigo_barras }}</td>
-                    <td>{{ p.nombre }}</td>
-                    <td class="text-warning fw-bold">${{ "%.2f"|format(p.precio) }}</td>
-                    <td class="text-light">${{ "%.2f"|format(p.costo_compra) }}</td>
-                    <td>
-                        {% if p.stock > (p.stock_minimo if p.stock_minimo is not none else 5) %}
-                            <span class="badge bg-success">{{ p.stock }} unidades</span>
-                        {% else %}
-                            <span class="badge bg-danger">Bajo stock: {{ p.stock }}</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ p.stock_minimo }}</td>
-                    <td>{{ p.unidad_medida }}</td>
-                    <td class="text-center">
-                        <a href="{{ url_for('detalle_producto', id=p.id) }}" class="btn btn-sm btn-outline-info me-1" title="Ver detalle">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a href="{{ url_for('editar_producto', id=p.id) }}" class="btn btn-sm btn-outline-warning me-1" title="Editar">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                        <a href="{{ url_for('borrar_producto', id=p.id) }}" class="btn btn-sm btn-outline-danger" title="Borrar" onclick="return confirm('¿Estás seguro de eliminar este producto?');">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="9" class="text-center py-4 text-muted">
-                        <em>No hay productos registrados en este momento.</em>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Mensajes Flash del Sistema -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show py-2 shadow-sm border-0" role="alert">
+            <i class="bi bi-info-circle me-1"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Tarjeta Principal de la Tabla -->
+    <div class="card bg-dark border-secondary shadow rounded-3">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th class="text-center" style="width: 50px;">ID</th>
+                        <th class="text-center" style="width: 70px;">Imagen</th>
+                        <th>Código de Barras</th>
+                        <th>Nombre</th>
+                        <th class="text-end">Precio</th>
+                        <th class="text-end">Costo</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-center">Stock Mín.</th>
+                        <th class="text-center">Unidad</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center" style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set items = lista_productos or productos %}
+                    {% if items %}
+                        {% for p in items %}
+                        <tr class="{% if p.estado == 'Inactivo' %}opacity-50 bg-secondary bg-opacity-10{% endif %}">
+                            <td class="text-center fw-bold">{{ p.id }}</td>
+                            
+                            <!-- Miniatura fija anti-parpadeo -->
+                            <td class="text-center">
+                                <div class="img-thumb-box border border-secondary shadow-sm">
+                                    <img src="{{ p.imagen_url or 'https://images.unsplash.com/photo-1597854710119-a5a84396736a?w=100' }}" 
+                                         alt="{{ p.nombre }}" 
+                                         loading="lazy"
+                                         onerror="this.src='https://images.unsplash.com/photo-1597854710119-a5a84396736a?w=100';">
+                                </div>
+                            </td>
+
+                            <td class="font-monospace text-light">
+                                <span class="badge bg-secondary">{{ p.codigo_barras or 'S/C' }}</span>
+                            </td>
+
+                            <td class="fw-semibold text-white col-nombre">{{ p.nombre }}</td>
+
+                            <td class="text-end text-warning fw-bold">
+                                ${{ "%.2f"|format(p.precio) }}
+                            </td>
+
+                            <!-- Costo de compra con soporte para columna costo o costo_compra -->
+                            <td class="text-end text-light opacity-75">
+                                ${{ "%.2f"|format(p.costo if p.costo is not none else (p.costo_compra or 0)) }}
+                            </td>
+
+                            <!-- Control visual de stock -->
+                            <td class="text-center">
+                                {% if p.stock == 0 %}
+                                    <span class="badge bg-danger">Agotado (0)</span>
+                                {% elif p.stock <= (p.stock_minimo if p.stock_minimo is not none else 3) %}
+                                    <span class="badge bg-danger">Bajo stock: {{ p.stock }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ p.stock }} unidades</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ p.stock_minimo if p.stock_minimo is not none else 3 }}</td>
+                            
+                            <td class="text-center">{{ p.unidad_medida or 'Unidad' }}</td>
+
+                            <!-- Badge de estado -->
+                            <td class="text-center">
+                                {% if p.estado == 'Activo' or p.estado is none %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Activo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="bi bi-pause-circle me-1"></i>Inactivo</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Botones de Acción con Bootstrap Icons estables -->
+                            <td class="text-center">
+                                <div class="btn-group shadow-sm" role="group">
+                                    <a href="{{ url_for('detalle_producto', id=p.id) }}" 
+                                       class="btn btn-sm btn-outline-info btn-action-custom" 
+                                       title="Ver Detalle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    
+                                    <a href="{{ url_for('editar_producto', id=p.id) }}" 
+                                       class="btn btn-sm btn-outline-warning btn-action-custom" 
+                                       title="Editar Producto e Imagen">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    {% if p.estado == 'Inactivo' %}
+                                        <a href="{{ url_for('cambiar_estado_producto', id=p.id, nuevo_estado='Activo') }}" 
+                                           class="btn btn-sm btn-outline-success btn-action-custom" 
+                                           title="Reactivar en Catálogo">
+                                            <i class="bi bi-play-circle"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('borrar_producto', id=p.id) }}" 
+                                           class="btn btn-sm btn-outline-danger btn-action-custom" 
+                                           title="Inactivar Producto" 
+                                           onclick="return confirm('¿Deseas pausar este producto? No se eliminará de las facturas.');">
+                                            <i class="bi bi-pause-circle"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="11" class="text-center py-5 text-muted">
+                                <i class="bi bi-box-seam fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                                <em>No hay productos registrados en este momento.</em>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

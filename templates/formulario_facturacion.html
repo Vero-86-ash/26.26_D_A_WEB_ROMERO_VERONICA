@@ -3,55 +3,99 @@
 {% block title %}Nueva Factura - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-secondary">
-                <div class="card-header bg-dark text-warning text-center">
-                    <h4 class="mb-0"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Emitir Nueva Factura</h4>
+        <div class="col-md-9 col-lg-8">
+            <div class="card bg-secondary text-white shadow-lg border-0">
+                <div class="card-header bg-dark text-warning py-3">
+                    <h4 class="mb-0"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Registrar Nueva Factura</h4>
                 </div>
-                <div class="card-body bg-light text-dark">
-                    <form method="POST" action="" novalidate>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('nueva_factura') }}" method="POST" novalidate>
                         {{ form.hidden_tag() }}
-                        
-            <div class="mb-3 mt-3">
-                            {{ form.cliente.label(class="form-label fw-bold") }}
-                            
-                            {{ form.cliente(
-                                class="form-control", 
-                                placeholder="Ej. Carlos Mendoza",
-                                pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñÁÉÍÓÚÑ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñÁÉÍÓÚÑ]+)+$",
-                                oninput="
-                                    this.value = this.value.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, ''); 
-                                    if(this.checkValidity()){ this.classList.remove('is-invalid'); } 
-                                    else { this.classList.add('is-invalid'); }
-                                "
-                            ) }}
-                            
-                            <div class="invalid-feedback fw-bold">
-                                Debe ingresar Nombre y Apellido iniciando con mayúscula (Ej. Cristian Mendoza). No ingrese números.
-                            </div>
+
+                        <!-- Número de Factura -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-light">Nº de Factura (Secuencial Automático)</label>
+                            {% if form.num_factura %}
+                                {{ form.num_factura(class="form-control bg-dark text-warning border-secondary fw-bold", readonly=True, placeholder="001-001-XXXXXX") }}
+                            {% else %}
+                                {{ form.numero_factura(class="form-control bg-dark text-warning border-secondary fw-bold", readonly=True, placeholder="001-001-XXXXXX") }}
+                            {% endif %}
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                {{ form.metodo_pago.label(class="form-label fw-bold") }}
-                                {{ form.metodo_pago(class="form-select") }}
-                                {% for error in form.metodo_pago.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+
+                        <!-- Cliente o Razón Social -->
+                        <div class="mb-3">
+                            {{ form.cliente.label(class="form-label fw-bold text-light") }}
+                            {{ form.cliente(class="form-control bg-dark text-white border-secondary", placeholder="Ej: Juan Pérez / Consumidor Final") }}
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Fila de Montos Calculados -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.subtotal.label(class="form-label fw-bold text-light") }}
+                                {{ form.subtotal(class="form-control bg-dark text-white border-secondary", id="subtotal", step="0.01", placeholder="0.00") }}
+                                {% for error in form.subtotal.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
                                 {% endfor %}
                             </div>
-                            <div class="col-md-6">
-                                {{ form.estado.label(class="form-label fw-bold") }}
-                                {{ form.estado(class="form-select") }}
-                                {% for error in form.estado.errors %}
-                                    <div class="text-danger small mt-1 fw-bold">{{ error }}</div>
+
+                            <div class="col-md-4 mb-3">
+                                {{ form.impuestos.label(class="form-label fw-bold text-light") }}
+                                {{ form.impuestos(class="form-control bg-dark text-white border-secondary", id="impuestos", readonly=True, step="0.01", placeholder="0.00") }}
+                                {% for error in form.impuestos.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                {{ form.descuento.label(class="form-label fw-bold text-light") }}
+                                {{ form.descuento(class="form-control bg-dark text-white border-secondary", id="descuento", step="0.01", placeholder="0.00") }}
+                                {% for error in form.descuento.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
                                 {% endfor %}
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <a href="{{ url_for('facturacion') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
-                            {{ form.submit(class="btn btn-warning fw-bold text-dark") }}
+                        <!-- Total a Pagar -->
+                        <div class="mb-3">
+                            {{ form.total.label(class="form-label fw-bold text-light") }}
+                            {{ form.total(class="form-control bg-dark text-success border-secondary fw-bold fs-5", id="total", readonly=True, step="0.01", placeholder="0.00") }}
+                            {% for error in form.total.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Método de Pago y Estado -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.metodo_pago.label(class="form-label fw-bold text-light") }}
+                                {{ form.metodo_pago(class="form-select bg-dark text-white border-secondary") }}
+                                {% for error in form.metodo_pago.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form.estado.label(class="form-label fw-bold text-light") }}
+                                {{ form.estado(class="form-select bg-dark text-white border-secondary") }}
+                                {% for error in form.estado.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top border-secondary">
+                            <a href="{{ url_for('facturacion') }}" class="btn btn-outline-light px-3">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-bold text-white shadow-sm">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Factura
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -59,4 +103,35 @@
         </div>
     </div>
 </div>
+
+<!-- Script de Automatización Financiera en Tiempo Real -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const subtotalInput = document.getElementById('subtotal');
+    const descuentoInput = document.getElementById('descuento');
+    const impuestosInput = document.getElementById('impuestos');
+    const totalInput = document.getElementById('total');
+
+    function actualizarValores() {
+        const subtotal = parseFloat(subtotalInput.value) || 0.00;
+        const descuento = parseFloat(descuentoInput.value) || 0.00;
+        
+        // Base imponible no negativa
+        const baseImponible = Math.max(0, subtotal - descuento);
+        
+        // IVA al 15% vigente
+        const iva = +(baseImponible * 0.15).toFixed(2);
+        const total = +(baseImponible + iva).toFixed(2);
+
+        if (impuestosInput) impuestosInput.value = iva.toFixed(2);
+        if (totalInput) totalInput.value = total.toFixed(2);
+    }
+
+    if (subtotalInput) subtotalInput.addEventListener('input', actualizarValores);
+    if (descuentoInput) descuentoInput.addEventListener('input', actualizarValores);
+
+    // Ejecutar al cargar la página si ya contiene valores previos
+    actualizarValores();
+});
+</script>
 {% endblock %}

@@ -3,74 +3,369 @@
 {% block title %}Citas Agendadas - Barbería Hernández{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-white fw-bold">CITAS</h2>
-    </div>
-    <div class="mb-4">
-        <a href="{{ url_for('formulario_cita') }}" class="btn btn-success fw-bold text-white">
-            <i class="fa-solid fa-plus me-1"></i> Agendar Cita
-        </a>
+<div class="container py-4">
+    <!-- Encabezado y Acción Principal -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="text-warning fw-bold mb-1">
+                <i class="fa-solid fa-calendar-check me-2"></i> GESTIÓN DE CITAS
+            </h2>
+            <p class="text-light opacity-75 small mb-0">Control de turnos, estado de atención, pagos y asignación de barberos.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('formulario_cita') }}" class="btn btn-warning text-dark fw-bold px-3 shadow-sm">
+                <i class="fa-solid fa-plus me-1"></i> Agendar Nueva Cita
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-dark table-hover align-middle border-secondary shadow">
-            <thead>
-                <tr class="table-secondary text-dark">
-                    <th>Cód. Cita</th>
-                    <th>Cliente</th>
-                    <th>Barbero</th>
-                    <th>Servicio</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Estado</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for c in citas %}
-                <tr>
-                    <td><strong>{{ c.id }}</strong></td>
-                    <td>{{ c.cliente }}</td>
-                    <td>{{ c.barbero }}</td>
-                    <td>{{ c.servicio }}</td>
-                    <td>{{ c.fecha }}</td>
-                    <td><span class="badge bg-secondary">{{ c.hora }}</span></td>
-                    <td>
-                        {% if c.estado == 'Confirmada' %}
-                            <span class="badge bg-success">Confirmada</span>
+    <!-- Mensajes de Alerta del Sistema -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Tarjetas de Resumen (Solo Administrador) -->
+    {% if session.get('rol') == 'Administrador' and citas %}
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-dark border-secondary shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Total Citas</span>
+                        <h4 class="fw-bold text-white mb-0 mt-1">{{ citas|length }}</h4>
+                    </div>
+                    <div class="fs-2 text-warning bg-black bg-opacity-25 px-3 py-2 rounded">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-dark border-secondary shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Confirmadas</span>
+                        <h4 class="fw-bold text-primary mb-0 mt-1">
+                            {{ citas|selectattr('estado', 'equalto', 'Confirmada')|list|length }}
+                        </h4>
+                    </div>
+                    <div class="fs-2 text-primary bg-black bg-opacity-25 px-3 py-2 rounded">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-dark border-secondary shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Cobrados / Pagados</span>
+                        <h4 class="fw-bold text-success mb-0 mt-1">
+                            {{ citas|selectattr('estado', 'in', ['Pagada', 'Pagado'])|list|length }}
+                        </h4>
+                    </div>
+                    <div class="fs-2 text-success bg-black bg-opacity-25 px-3 py-2 rounded">
+                        <i class="fa-solid fa-cash-register"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-dark border-secondary shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Pendientes</span>
+                        <h4 class="fw-bold text-warning mb-0 mt-1">
+                            {{ citas|selectattr('estado', 'equalto', 'Pendiente')|list|length }}
+                        </h4>
+                    </div>
+                    <div class="fs-2 text-warning bg-black bg-opacity-25 px-3 py-2 rounded">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabla Principal de Citas -->
+    <div class="card bg-dark text-white border-secondary shadow-lg">
+        <div class="card-header border-secondary bg-black bg-opacity-25 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-light fs-6">
+                <i class="fa-solid fa-scissors me-2 text-warning"></i> Lista de Citas Registradas
+            </h5>
+            <span class="badge bg-secondary">{{ citas|length }} cita(s)</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover table-striped mb-0 align-middle">
+                    <thead class="table-secondary text-dark text-center small text-uppercase">
+                        <tr>
+                            <th class="py-3 px-3">Cód.</th>
+                            <th class="py-3 text-start">Cliente</th>
+                            <th class="py-3 text-start">Barbero</th>
+                            <th class="py-3 text-start">Servicio</th>
+                            <th class="py-3">Fecha y Hora</th>
+                            <th class="py-3 text-start">Método / Comprobante</th>
+                            <th class="py-3 text-start">Observaciones</th>
+                            <th class="py-3 text-center">Estado de Cobro</th>
+                            <th class="py-3 text-center" style="min-width: 170px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if citas %}
+                            {% for c in citas %}
+                            <tr>
+                                <!-- Código de Cita -->
+                                <td class="px-3 text-center font-monospace fw-bold text-warning">
+                                    #{{ "%04d"|format(c.id) }}
+                                </td>
+
+                                <!-- Cliente y Teléfono con Alto Contraste -->
+                                <td class="text-start">
+                                    <div class="fw-bold text-white fs-6 mb-1">{{ c.cliente }}</div>
+                                    {% if c.cliente_telefono and c.cliente_telefono != 'S/N' %}
+                                        <div class="small fw-semibold" style="color: #93c5fd;">
+                                            <i class="fa-solid fa-phone me-1 text-warning"></i>{{ c.cliente_telefono }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Barbero Asignado -->
+                                <td class="text-start">
+                                    <span class="badge bg-dark border border-secondary text-light">
+                                        <i class="fa-solid fa-user-tie text-warning me-1"></i> {{ c.barbero }}
+                                    </span>
+                                </td>
+
+                                <!-- Servicio Solicitado -->
+                                <td class="text-start fw-bold text-info">
+                                    {{ c.servicio }}
+                                </td>
+
+                                <!-- Fecha y Hora -->
+                                <td class="text-center">
+                                    <div class="text-light small fw-bold mb-1">{{ c.fecha }}</div>
+                                    <span class="badge bg-secondary font-monospace">
+                                        <i class="fa-solid fa-clock me-1 text-warning"></i>{{ c.hora }}
+                                    </span>
+                                </td>
+
+                                <!-- Método de Pago y Referencia -->
+                                <td class="text-start">
+                                    <div class="badge bg-dark border border-secondary text-light mb-1">
+                                        {% if 'Transferencia' in c.metodo_pago %}
+                                            <i class="fa-solid fa-building-columns text-info me-1"></i>
+                                        {% elif 'QR' in c.metodo_pago or 'Deuna' in c.metodo_pago %}
+                                            <i class="fa-solid fa-qrcode text-warning me-1"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-money-bill-1-wave text-success me-1"></i>
+                                        {% endif %}
+                                        {{ c.metodo_pago }}
+                                    </div>
+                                    {% if c.comprobante_pago %}
+                                        <div class="small font-monospace" style="color: #93c5fd;">
+                                            <i class="fa-solid fa-receipt text-warning me-1"></i>Ref: {{ c.comprobante_pago }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Observaciones o Motivo de Cancelación Claramente Visibles -->
+                                <td class="text-start">
+                                    {% if c.estado == 'Cancelada' and c.motivo_cancelacion %}
+                                        <span class="text-danger small d-block fw-bold">
+                                            <i class="fa-solid fa-ban me-1"></i><strong>Motivo:</strong> {{ c.motivo_cancelacion }}
+                                        </span>
+                                    {% elif c.notas_cliente %}
+                                        <span class="text-light small fw-medium" style="color: #f8fafc !important;">
+                                            <i class="fa-solid fa-comment-dots text-warning me-1"></i>{{ c.notas_cliente }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-secondary small">-</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Estado de Pago / Atención -->
+                                <td class="text-center">
+                                    {% if c.estado in ['Pagada', 'Pagado'] %}
+                                        <span class="badge bg-success px-2 py-1">
+                                            <i class="fa-solid fa-circle-check me-1"></i> Pagado
+                                        </span>
+                                    {% elif c.estado == 'Confirmada' %}
+                                        <span class="badge bg-primary px-2 py-1">
+                                            <i class="fa-solid fa-user-check me-1"></i> Confirmada (Por Cobrar)
+                                        </span>
+                                    {% elif c.estado == 'Cancelada' %}
+                                        <span class="badge bg-danger px-2 py-1">
+                                            <i class="fa-solid fa-circle-xmark me-1"></i> Cancelada
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark px-2 py-1">
+                                            <i class="fa-solid fa-hourglass-start me-1"></i> Pendiente
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Botones de Acción -->
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <!-- Botón Confirmar Pago con Modal (Administrador: cuando no está Pagado ni Cancelado) -->
+                                        {% if session.get('rol') == 'Administrador' and c.estado not in ['Pagada', 'Pagado', 'Cancelada'] %}
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-success fw-bold text-white shadow-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalConfirmarCita{{ c.id }}" 
+                                                    title="Confirmar ingreso de dinero y emitir factura">
+                                                <i class="fa-solid fa-circle-check me-1"></i> Cobrar
+                                            </button>
+                                        {% endif %}
+
+                                        <!-- Cambiar Estado de Atención (Solo Administrador) -->
+                                        {% if session.get('rol') == 'Administrador' %}
+                                            <a href="{{ url_for('cambiar_estado_cita', id=c.id) }}" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="Rotar estado de la cita">
+                                                <i class="fa-solid fa-arrows-rotate"></i>
+                                            </a>
+                                        {% endif %}
+
+                                        <!-- Editar Cita -->
+                                        <a href="{{ url_for('editar_cita', id=c.id) }}" 
+                                           class="btn btn-sm btn-outline-warning" 
+                                           title="Editar Cita">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+
+                                        <!-- Cancelar Cita (Abre Modal) -->
+                                        {% if c.estado != 'Cancelada' %}
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalCancelar{{ c.id }}" 
+                                                    title="Cancelar Cita">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         {% else %}
-                            <span class="badge bg-warning text-dark">Pendiente</span>
+                            <tr>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-calendar-xmark fa-3x mb-3 text-secondary d-block"></i>
+                                    <h5 class="fw-bold text-light">No hay citas registradas en el sistema</h5>
+                                    <p class="mb-0 text-muted small">Haga clic en «Agendar Nueva Cita» para programar un turno.</p>
+                                </td>
+                            </tr>
                         {% endif %}
-                    </td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <!-- Botón Cambiar Estado -->
-                            <a href="{{ url_for('cambiar_estado_cita', id=c.id) }}" class="btn btn-sm btn-outline-info" title="Cambiar Estado">
-                                <i class="fa-solid fa-arrows-rotate"></i> Cambiar
-                            </a>
-                            
-                            <!-- Botón Editar -->
-                            <a href="{{ url_for('editar_cita', id=c.id) }}" class="btn btn-sm btn-outline-warning" title="Editar Cita">
-                                <i class="fa-solid fa-pen-to-square"></i> Editar
-                            </a>
-                            
-                            <!-- Botón Eliminar -->
-                            <a href="{{ url_for('eliminar_cita', id=c.id) }}" class="btn btn-sm btn-outline-danger" title="Eliminar Cita" onclick="return confirm('¿Está seguro de que desea eliminar esta cita?');">
-                                <i class="fa-solid fa-trash"></i> Eliminar
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" class="text-center py-4 text-muted">
-                        <em>No hay citas agendadas en este momento. Registre una nueva cita.</em>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- ========================================================================= -->
+<!-- MODALES FUERA DE LA TABLA (EVITA PROBLEMAS DE Z-INDEX Y BACKDROP)          -->
+<!-- ========================================================================= -->
+{% if citas %}
+    {% for c in citas %}
+        <!-- Modal: Confirmar Pago de Cita (Administrador) -->
+        {% if session.get('rol') == 'Administrador' and c.estado not in ['Pagada', 'Pagado', 'Cancelada'] %}
+        <div class="modal fade text-start" id="modalConfirmarCita{{ c.id }}" tabindex="-1" aria-labelledby="modalConfirmarCitaLabel{{ c.id }}" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title fw-bold text-success" id="modalConfirmarCitaLabel{{ c.id }}">
+                            <i class="fa-solid fa-circle-check me-2"></i> Confirmar Cobro - Cita #{{ "%04d"|format(c.id) }}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form action="{{ url_for('confirmar_pago_cita', id=c.id) }}" method="POST">
+                        <div class="modal-body">
+                            <p class="text-light mb-2">
+                                ¿Confirma que ha recibido el pago del cliente <strong>{{ c.cliente }}</strong> por el servicio <strong>{{ c.servicio }}</strong>?
+                            </p>
+                            
+                            <div class="p-3 bg-secondary bg-opacity-25 border border-secondary rounded mb-3 small">
+                                <div><strong>Método declarado:</strong> <span class="text-warning fw-bold">{{ c.metodo_pago }}</span></div>
+                                {% if c.comprobante_pago %}
+                                <div class="mt-1">
+                                    <strong>Referencia / Comprobante:</strong> 
+                                    <span class="font-monospace text-info fw-bold">{{ c.comprobante_pago }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="alert alert-info py-2 mb-0 small text-dark">
+                                <i class="fa-solid fa-info-circle me-1"></i> Al confirmar, la cita pasará a <strong>Pagado</strong>, se emitirá la factura oficial legal en el sistema y se abrirá la vista de impresión.
+                            </div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Regresar</button>
+                            <button type="submit" class="btn btn-success fw-bold text-white">
+                                <i class="fa-solid fa-check me-1"></i> Confirmar Pago y Emitir Factura
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Modal: Cancelar Cita -->
+        {% if c.estado != 'Cancelada' %}
+        <div class="modal fade text-start" id="modalCancelar{{ c.id }}" tabindex="-1" aria-labelledby="modalCancelarLabel{{ c.id }}" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title fw-bold text-danger" id="modalCancelarLabel{{ c.id }}">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Cancelar Cita #{{ "%04d"|format(c.id) }}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form action="{{ url_for('eliminar_cita', id=c.id) }}" method="POST">
+                        <div class="modal-body">
+                            <p class="text-light mb-2">
+                                ¿Confirma que desea cancelar el turno de <strong>{{ c.cliente }}</strong> programado para el día <strong>{{ c.fecha }}</strong> a las <strong>{{ c.hora }}</strong>?
+                            </p>
+                            <div class="mb-3">
+                                <label for="motivo_cancelacion_{{ c.id }}" class="form-label text-warning small fw-semibold">
+                                    Motivo de la Cancelación:
+                                </label>
+                                <textarea 
+                                    name="motivo_cancelacion" 
+                                    id="motivo_cancelacion_{{ c.id }}" 
+                                    class="form-control bg-secondary text-white border-dark" 
+                                    rows="3" 
+                                    placeholder="Indique la justificación de la cancelación..." 
+                                    required></textarea>
+                            </div>
+                            <div class="alert alert-warning py-2 mb-0 small text-dark">
+                                <i class="fa-solid fa-info-circle me-1"></i> El turno quedará liberado y se registrará la justificación en el historial del cliente.
+                            </div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Regresar</button>
+                            <button type="submit" class="btn btn-danger fw-bold">
+                                <i class="fa-solid fa-ban me-1"></i> Confirmar Cancelación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 {% endblock %}
+

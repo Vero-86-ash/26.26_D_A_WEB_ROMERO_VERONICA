@@ -1,0 +1,329 @@
+@charset "UTF-8";
+/*!
+* Start Bootstrap - Agency v7.0.12 (https://startbootstrap.com/theme/agency)
+* Copyright 2013-2023 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-agency/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap  v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+/* 1. ESTILOS GLOBALES Y CUERPO */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #111;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
+
+/* 2. HEADER, BANNER Y FONDOS */
+.header-fondo-imagen {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                      url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.header-overlay {
+    min-height: 400px; 
+    width: 100%;
+    background-color: rgba(0,0,0,0.6);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.header-title, .header-titulo, .titulo-barberia {
+    color: #6691ff;
+    font-size: 50px;
+    text-shadow: 3px 3px 8px black;
+    text-transform: uppercase;
+}
+
+.header-subtitulo, .subtitulo-barberia { 
+    color: #ffe600; 
+}
+
+.header-barberia {
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 100px 20px;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-banner {
+    background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033');
+    background-size: cover;
+    background-position: center;
+    padding: 80px;
+    text-align: center;
+}
+
+/* 3. BOTONES Y NAVEGACIÓN */
+.btn-personalizado {
+    background: linear-gradient(45deg, #ff6600, #ff3300);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+}
+
+.btn-tiktok-visible { 
+    border: 1px solid #fff; 
+    color: #fff; 
+}
+
+.btn-tiktok-visible:hover { 
+    background-color: #ff0050; 
+    color: white; 
+}
+
+.btn-eliminar { 
+    margin-left: 10px; 
+}
+
+.btn-maps {
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #ff6600, #ff8c00);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-maps:hover {
+    background: linear-gradient(135deg, #ff8c00, #ff6600);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.5);
+    color: white;
+}
+
+.menu-navegacion { 
+    background-color: #222; 
+    padding: 15px; 
+    text-align: center; 
+}
+
+.menu-navegacion a { 
+    color: white; 
+    margin: 15px; 
+    text-decoration: none; 
+}
+
+/* 4. SECCIONES GENERALES Y TARJETAS */
+.section-title { color: #00ffc8; }
+.trabajo-titulo { color: #0088ff; }
+.footer-barberia, .footer-final { background-color: #4b0082; }
+
+.section-negra {
+    background-color: #000000 !important;
+}
+
+.section-negra .section-subheading {
+    color: #aaaaaa !important;
+}
+
+.reserva-card {
+    background-color: #111;
+    border: 1px solid #333;
+    border-left: 5px solid #ff6600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    padding: 15px;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.producto-card h5 {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.producto-card:hover h5 {
+    color: #ff6600 !important;
+    transform: translateY(-3px);
+}
+
+/* 5. PORTAFOLIO Y GALERÍA DE TRABAJOS */
+.portfolio-negro {
+    background-color: #000000 !important;
+}
+
+.portfolio-item-custom {
+    background-color: #121212;
+    border: 1px solid #222222;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-item-custom:hover {
+    transform: translateY(-5px);
+    border-color: #ffc800;
+}
+
+.portfolio-img-wrapper {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+}
+
+.portfolio-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    transition: transform 0.3s ease;
+}
+
+.portfolio-item-custom:hover .portfolio-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.portfolio-content {
+    padding: 20px;
+    text-align: center;
+    background-color: #121212;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.portfolio-content h4 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.portfolio-content p {
+    color: #999999;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.portfolio-item .img-trabajo {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* 6. SECCIÓN DE UBICACIÓN Y MAPAS */
+.seccion-ubicacion {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.mapa-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #333;
+}
+
+.mapa-container iframe, .mapa-wrapper iframe {
+    filter: grayscale(100%) invert(90%) brightness(100%) contrast(90%);
+}
+
+.boton-mapa {
+    display: inline-block;
+    background-color: #fff;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+
+.boton-mapa:hover {
+    background-color: #d4af37;
+    color: #fff;
+}
+
+/* 7. VALIDACIONES DE FORMULARIOS (BOOTSTRAP) */
+.is-valid {
+    border-color: #2ecc71 !important;
+}
+
+.is-invalid {
+    border-color: #ff4757 !important;
+}
+
+/* 8. SECCIÓN "NUESTRA HISTORIA" */
+.timeline > li > .timeline-image {
+    width: 120px; 
+    height: 120px; 
+    margin-left: -60px; 
+}
+
+.timeline > li > .timeline-image h4 {
+    margin-top: 25px;
+    font-size: 1rem;
+}
+
+.timeline > li .timeline-panel {
+    color: #ffffff !important;
+}
+
+.timeline > li .timeline-panel h4, 
+.timeline > li .timeline-panel .subheading {
+    color: #d4af37 !important;
+}
+
+.timeline > li .timeline-panel p {
+    color: #cccccc !important;
+}
+
+/* Bordes de validación en tiempo real para inputs y textareas */
+input.is-invalid, textarea.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+input.is-valid, textarea.is-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25) !important;
+}
+/* Cambia el color del texto gris apagado a un tono más visible */
+.section-subheading.text-muted {
+  color: #333333 !important; 
+  display: block !important;
+  visibility: visible !important;
+}

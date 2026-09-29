@@ -1,54 +1,222 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante {{ factura.numero_factura }} - Barbería Hernández</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            background-color: #121212; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #f8f9fa;
+        }
+        .invoice-card { 
+            background: #1e1e1e; 
+            max-width: 850px; 
+            margin: 30px auto; 
+            padding: 45px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); 
+            border: 1px solid #333333;
+        }
+        .badge-paid {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #a3cfbb;
+        }
+        .badge-void {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+        @media print {
+            body { 
+                background-color: #ffffff !important; 
+                color: #000000 !important;
+            }
+            .no-print { 
+                display: none !important; 
+            }
+            .invoice-card { 
+                background: #ffffff !important;
+                color: #000000 !important;
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                padding: 10px !important; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                border: none !important; 
+            }
+            .text-muted, .text-black-50 {
+                color: #555555 !important;
+            }
+            .table {
+                color: #000000 !important;
+            }
+            table {
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
 
-{% block title %}Detalle de Factura - Barbería Hernández{% endblock %}
+<div class="container">
+    <!-- Barra de acciones superior (excluida de impresión) -->
+    <div class="text-center my-4 no-print">
+        <button onclick="window.print();" class="btn btn-warning text-dark px-4 py-2 me-2 rounded-3 shadow-sm fw-bold">
+            <i class="bi bi-printer-fill me-1"></i> Imprimir / Guardar como PDF
+        </button>
+        <a href="{{ url_for('facturacion') }}" class="btn btn-outline-light px-4 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Regresar a Facturación
+        </a>
+    </div>
 
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-secondary bg-dark text-white">
-                <div class="card-header bg-secondary text-dark d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-file-invoice me-2"></i>Detalle de Factura: {{ factura.num }}</h4>
-                    <a href="{{ url_for('facturacion') }}" class="btn btn-sm btn-dark text-white">Volver</a>
+    <!-- Comprobante Fiscal -->
+    <div class="invoice-card border border-secondary">
+        <!-- Cabecera Corporativa -->
+        <div class="row pb-4 mb-4 border-bottom border-secondary align-items-center">
+            <div class="col-7 d-flex align-items-center">
+                <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 58px; height: 58px; font-size: 26px;">
+                    <i class="fa-solid fa-scissors"></i>
                 </div>
-                <div class="card-body bg-light text-dark p-4">
-                    {% if factura %}
-                        <ul class="list-group list-group-flush mb-4">
-                            <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Nº de Factura:</span> <span>{{ factura.num }}</span>
-                            </li>
-                            <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Cliente:</span> <span>{{ factura.cliente }}</span>
-                            </li>
-                            <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Método de Pago:</span> <span>{{ factura.metodo_pago }}</span>
-                            </li>
-                            <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Monto Total:</span> <span class="text-success fw-bold">{{ factura.monto }}</span>
-                            </li>
-                            <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Estado actual:</span> 
-                                <span>
-                                    {% if factura.estado == 'Pagado' %}
-                                        <span class="badge bg-success">Pagado</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Pendiente</span>
-                                    {% endif %}
-                                </span>
-                            </li>
-                        </ul>
-                    {% else %}
-                        <p class="text-danger text-center">No se encontró la factura seleccionada.</p>
-                    {% endif %}
-
-                    <div class="text-center">
-                        <a href="{{ url_for('facturacion') }}" class="btn btn-warning fw-bold text-dark px-4">
-                            Regresar a Facturación
-                        </a>
-                    </div>
+                <div>
+                    <h3 class="fw-bold text-warning mb-0 tracking-tight">BARBERÍA HERNÁNDEZ</h3>
+                    <p class="text-light opacity-75 small mb-0 fw-medium">Servicios Profesionales de Barbería y Estilismo</p>
+                    <p class="text-muted small mb-0">Puembo, Pichincha - Ecuador | RUC: 1792345678001</p>
                 </div>
             </div>
+            <div class="col-5 text-end">
+                <span class="text-warning fw-bold text-uppercase tracking-wider small d-block mb-1">Factura Electrónica</span>
+                <h4 class="fw-bold text-white font-monospace mb-1">{{ factura.numero_factura }}</h4>
+                <p class="text-light opacity-75 small mb-0">
+                    <strong>Fecha:</strong> 
+                    {% if factura.fecha is string %}
+                        {{ factura.fecha }}
+                    {% elif factura.fecha %}
+                        {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Información del Cliente y Cobro -->
+        <div class="row mb-4 p-3 rounded bg-dark border border-secondary">
+            <div class="col-sm-6">
+                <span class="text-uppercase tracking-wider text-warning small fw-bold d-block mb-2">Datos del Cliente / Adquiriente</span>
+                <h6 class="fw-bold text-white mb-1 fs-6">{{ factura.cliente_nombre }}</h6>
+                <p class="text-light opacity-75 small mb-1"><strong>C.I. / RUC:</strong> {{ factura.cliente_identificacion or '9999999999999' }}</p>
+                <p class="text-light opacity-75 small mb-1"><strong>Teléfono:</strong> {{ factura.cliente_telefono or 'S/N' }}</p>
+                <p class="text-light opacity-75 small mb-0"><strong>Correo:</strong> {{ factura.cliente_email or 'cliente@barberiahernandez.com' }}</p>
+            </div>
+            <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                <span class="text-uppercase tracking-wider text-warning small fw-bold d-block mb-2">Información del Cobro</span>
+                <div class="mb-2">
+                    <span class="text-light opacity-75 small d-inline-block me-1">Estado:</span>
+                    {% if factura.estado in ['Inactivo', 'Anulada', 'Cancelada'] %}
+                        <span class="badge badge-void px-3 py-1 fs-6 rounded-pill">
+                            <i class="bi bi-x-circle-fill me-1"></i> Anulada
+                        </span>
+                    {% else %}
+                        <span class="badge badge-paid px-3 py-1 fs-6 rounded-pill">
+                            <i class="bi bi-check-circle-fill me-1"></i> Pagada
+                        </span>
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="text-light opacity-75 small d-inline-block me-1">Método de Pago:</span>
+                    <span class="badge bg-secondary text-white border border-secondary px-3 py-1 fs-6">
+                        <i class="bi bi-wallet2 text-warning me-1"></i> {{ factura.metodo_pago or 'Efectivo en Barbería' }}
+                    </span>
+                </div>
+                {% if factura.comprobante_transferencia %}
+                <div class="mt-2">
+                    <span class="text-light opacity-75 small">Referencia: <strong class="text-info font-monospace">{{ factura.comprobante_transferencia }}</strong></span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tabla de Artículos o Servicios Facturados -->
+        <div class="table-responsive mb-4">
+            <table class="table table-dark table-bordered align-middle mb-0">
+                <thead class="table-secondary text-dark fw-bold">
+                    <tr>
+                        <th class="ps-3">Código / Descripción del Ítem o Servicio</th>
+                        <th class="text-center" style="width: 90px;">Cant.</th>
+                        <th class="text-end" style="width: 140px;">P. Unitario ($)</th>
+                        <th class="text-end pe-3" style="width: 140px;">Subtotal ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in detalles %}
+                    <tr>
+                        <td class="ps-3">
+                            <div class="fw-bold text-white">{{ d.item_nombre }}</div>
+                            <small class="text-warning font-monospace">{{ d.codigo }}</small>
+                        </td>
+                        <td class="text-center font-monospace">{{ d.cantidad }}</td>
+                        <td class="text-end font-monospace">${{ "%.2f"|format(d.precio_unitario) }}</td>
+                        <td class="text-end pe-3 fw-bold font-monospace text-success">${{ "%.2f"|format(d.subtotal) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-3 text-muted">Sin detalles asociados a este comprobante.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-dark">
+                    <tr>
+                        <th colspan="3" class="text-end py-2 text-light opacity-75 fw-semibold">Subtotal:</th>
+                        <td class="text-end pe-3 py-2 fw-semibold font-monospace">${{ "%.2f"|format(factura.subtotal or 0.0) }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end py-2 text-light opacity-75 fw-semibold border-top-0">Descuento:</th>
+                        <td class="text-end pe-3 py-2 fw-semibold font-monospace border-top-0">${{ "%.2f"|format(factura.descuento or 0.0) }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end py-2 text-light opacity-75 fw-semibold border-top-0">IVA (15%):</th>
+                        <td class="text-end pe-3 py-2 fw-semibold font-monospace border-top-0">${{ "%.2f"|format(factura.iva or 0.0) }}</td>
+                    </tr>
+                    <tr class="table-secondary text-dark">
+                        <th colspan="3" class="text-end py-3 fs-5 fw-bold">TOTAL A PAGAR:</th>
+                        <th class="text-end pe-3 py-3 fs-5 fw-bold font-monospace text-success">${{ "%.2f"|format(factura.total or 0.0) }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Pie de Página Fiscal y Auditoría -->
+        <div class="text-center pt-3 border-top border-secondary">
+            <p class="text-light opacity-75 small mb-1">
+                Gracias por preferir nuestros servicios profesionales en <strong>Barbería Hernández</strong>.
+            </p>
+            <small class="text-muted" style="font-size: 0.75rem;">Documento tributario digital autorizado conforme a la normativa del SRI de la República del Ecuador.</small>
         </div>
     </div>
 </div>
-{% endblock %}
+
+{% if imprimir_auto %}
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        window.print();
+    }, 400);
+});
+</script>
+{% endif %}
+</body>
+</html>
