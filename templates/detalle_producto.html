@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Detalle de Producto - Barbería Hernández{% endblock %}
+{% block title %}Detalle del Producto - Barbería Hernández{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -10,22 +10,42 @@
                 
                 {% if producto %}
                     <div class="card-header bg-secondary text-dark d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-box me-2"></i>Detalle del Producto: {{ producto.id }}</h4>
+                        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-box me-2"></i>Detalle del Producto: #{{ producto.id }}</h4>
                         <a href="{{ url_for('productos') }}" class="btn btn-sm btn-dark text-white">Volver</a>
                     </div>
                     <div class="card-body bg-light text-dark p-4">
+                        
+                        <!-- Imagen o Vista Previa del Producto -->
+                        {% if producto.imagen_url %}
+                        <div class="text-center mb-4">
+                            <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}" class="img-fluid rounded border border-secondary shadow-sm" style="max-height: 200px; object-fit: cover;">
+                        </div>
+                        {% endif %}
+
                         <ul class="list-group list-group-flush mb-4">
                             <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Código:</span> <span>{{ producto.id }}</span>
+                                <span class="fw-bold">ID del Sistema:</span> <span>{{ producto.id }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                <span class="fw-bold">Código de Barras:</span> <span class="font-monospace">{{ producto.codigo_barras or 'N/A' }}</span>
                             </li>
                             <li class="list-group-item bg-transparent d-flex justify-content-between">
                                 <span class="fw-bold">Nombre:</span> <span>{{ producto.nombre }}</span>
                             </li>
                             <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Precio Unitario:</span> <span class="text-success fw-bold">${{ "%.2f"|format(producto.precio) }}</span>
+                                <span class="fw-bold">Categoría:</span> <span>{{ producto.categoria or 'General' }}</span>
                             </li>
                             <li class="list-group-item bg-transparent d-flex justify-content-between">
-                                <span class="fw-bold">Stock Disponible:</span> <span>{{ producto.stock }} unidades</span>
+                                <span class="fw-bold">Precio de Venta:</span> <span class="text-success fw-bold">${{ "%.2f"|format(producto.precio) }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                <span class="fw-bold">Stock Disponible:</span> <span>{{ producto.stock }} {{ producto.unidad_medida or 'unidades' }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                <span class="fw-bold">Estado:</span> 
+                                <span class="badge bg-{% if producto.estado == 'Activo' %}success{% else %}danger{% endif %}">
+                                    {{ producto.estado }}
+                                </span>
                             </li>
                         </ul>
 

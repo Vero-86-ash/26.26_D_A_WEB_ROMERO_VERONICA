@@ -35,7 +35,7 @@
     {% endwith %}
 
     <!-- ================================================================= -->
-    <!-- BARRA DE BÚSQUEDA PROFESIONAL CON LUPITA Y ACCIONES               -->
+    <!-- BARRA DE BÚSQUEDA PROFESIONAL CON LUPITA Y ACCIONES              -->
     <!-- ================================================================= -->
     <div class="card bg-dark border-secondary p-3 mb-4 shadow-sm">
         <form method="GET" action="{{ url_for('facturacion') }}" class="row g-2 align-items-center">
@@ -74,7 +74,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small text-uppercase fw-semibold">Total Facturas</span>
-                        <h4 class="fw-bold text-white mb-0 mt-1">{{ facturas|length }}</h4>
+                        <h4 class="fw-bold text-white mb-0 mt-1">{{ total_registros if total_registros is defined else facturas|length }}</h4>
                     </div>
                     <div class="fs-2 text-warning bg-black bg-opacity-25 px-3 py-2 rounded">
                         <i class="fa-solid fa-receipt"></i>
@@ -121,7 +121,7 @@
             <h5 class="mb-0 text-light fs-6">
                 <i class="fa-solid fa-list-check me-2 text-warning"></i> Historial de Comprobantes
             </h5>
-            <span class="badge bg-secondary">{{ facturas|length }} registro(s)</span>
+            <span class="badge bg-secondary">{{ total_registros if total_registros is defined else facturas|length }} registro(s)</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -277,10 +277,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Componente Universal de Paginación -->
+    {% if total_pages > 1 %}
+    <nav aria-label="Navegación de facturas" class="my-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page - 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Anterior</a>
+            </li>
+
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link {% if p == page %}bg-warning text-dark fw-bold border-warning{% else %}bg-dark text-white border-secondary{% endif %}" href="?page={{ p }}{% if busqueda %}&q={{ busqueda }}{% endif %}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page + 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 
 <!-- ========================================================================= -->
-<!-- MODALES DE CONFIRMACIÓN (UBICADOS FUERA DE LA TABLA)                      -->
+<!-- MODALES DE CONFIRMACIÓN (UBICADOS FUERZA DE LA TABLA)                     -->
 <!-- ========================================================================= -->
 {% if es_admin and facturas %}
     {% for f in facturas %}

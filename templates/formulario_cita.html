@@ -20,11 +20,11 @@
                     </p>
                 </div>
 
-                <!-- Panel informativo de horario comercial -->
-                <div class="alert alert-dark border-secondary d-flex align-items-center mb-4 py-2 px-3 rounded-2">
-                    <i class="bi bi-clock-history text-warning fs-5 me-3"></i>
+                <!-- Panel informativo de horario comercial (Azul Bajito) -->
+                <div class="alert alert-info border-info bg-info bg-opacity-10 d-flex align-items-center mb-4 py-2 px-3 rounded-2">
+                    <i class="bi bi-clock-history text-info fs-5 me-3"></i>
                     <div>
-                        <span class="fw-bold text-warning d-block">Horario de Atención:</span>
+                        <span class="fw-bold text-info d-block">Horario de Atención:</span>
                         <span class="small text-light">Lunes a Domingo de 09:00 a 21:00. No se admiten reservas fuera de este rango.</span>
                     </div>
                 </div>
@@ -49,16 +49,20 @@
                 {% endif %}
 
                 <!-- Formulario -->
-                <form method="POST" action="{% if editando %}{{ url_for('editar_cita', id=cita_id) }}{% else %}{{ url_for('formulario_cita') }}{% endif %}">
+                <form method="POST" action="{% if editando %}{{ url_for('editar_cita', id=cita_id) }}{% else %}{{ url_for('formulario_cita') }}{% endif %}" id="formAgendarCita">
                     {{ form.hidden_tag() }}
                     
                     <div class="row mb-3">
-                        <!-- Campo Cliente -->
+                        <!-- Campo Cliente con validación de Nombre y Apellido -->
                         <div class="col-md-6 mb-3 mb-md-0">
                             {{ form.cliente.label(class="form-label fw-semibold text-white") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-person"></i></span>
-                                {{ form.cliente(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.cliente.errors else ""), placeholder="Ej. Carlos Mendoza", autocapitalize="words", readonly=editando) }}
+                                {{ form.cliente(class="form-control bg-dark text-white border-secondary", id="inputNombreCliente", placeholder="Ej. Saul Ruiz", autocapitalize="words", readonly=editando) }}
+                            </div>
+                            <small class="text-light opacity-50 d-block mt-1">Debe ingresar Nombre y Apellido.</small>
+                            <div id="cliente_error_feedback" class="text-danger small mt-1 d-none">
+                                <i class="bi bi-exclamation-circle me-1"></i>Debe ingresar al menos un nombre y un apellido.
                             </div>
                             {% for error in form.cliente.errors %}
                                 <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
@@ -70,7 +74,7 @@
                             {{ form.telefono.label(class="form-label fw-semibold text-white") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-telephone"></i></span>
-                                {{ form.telefono(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.telefono.errors else ""), placeholder="0989876543", inputmode="numeric", maxlength="10", oninput="this.value = this.value.replace(/[^0-9]/g, '')", readonly=editando) }}
+                                {{ form.telefono(class="form-control bg-dark text-white border-secondary", placeholder="0989876543", inputmode="numeric", maxlength="10", oninput="this.value = this.value.replace(/[^0-9]/g, '')", readonly=editando) }}
                             </div>
                             <small class="text-light opacity-50 d-block mt-1">Solo dígitos numéricos (máximo 10).</small>
                             {% for error in form.telefono.errors %}
@@ -85,7 +89,7 @@
                             {{ form.fecha.label(class="form-label fw-semibold text-white") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-calendar-event"></i></span>
-                                {{ form.fecha(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.fecha.errors else ""), type="date", required=True) }}
+                                {{ form.fecha(class="form-control bg-dark text-white border-secondary", type="date", required=True) }}
                             </div>
                             {% for error in form.fecha.errors %}
                                 <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
@@ -97,7 +101,7 @@
                             {{ form.hora.label(class="form-label fw-semibold text-white") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-clock"></i></span>
-                                {{ form.hora(class="form-control bg-dark text-white border-secondary " + ("is-invalid" if form.hora.errors else ""), type="time", id="hora_input", min="09:00", max="21:00", required=True) }}
+                                {{ form.hora(class="form-control bg-dark text-white border-secondary", type="time", id="hora_input", min="09:00", max="21:00", required=True) }}
                             </div>
                             <small class="text-light opacity-50 d-block mt-1">Rango permitido: 09:00 a 21:00.</small>
                             <div id="hora_error_feedback" class="text-danger small mt-1 d-none">
@@ -115,23 +119,29 @@
                             {{ form.barbero.label(class="form-label fw-semibold text-white") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-scissors"></i></span>
-                                {{ form.barbero(class="form-select bg-dark text-white border-secondary " + ("is-invalid" if form.barbero.errors else ""), required=True) }}
+                                {{ form.barbero(class="form-select bg-dark text-white border-secondary", required=True) }}
                             </div>
                             {% for error in form.barbero.errors %}
                                 <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
                             {% endfor %}
                         </div>
 
-                        <!-- Campo Servicio -->
+                        <!-- Campo Servicio con precios fijos y retención de selección -->
                         <div class="col-md-6">
-                            {{ form.servicio.label(class="form-label fw-semibold text-white") }}
+                            <label class="form-label fw-semibold text-white">Servicio Principal</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-warning border-secondary"><i class="bi bi-tag"></i></span>
-                                {{ form.servicio(class="form-select bg-dark text-white border-secondary " + ("is-invalid" if form.servicio.errors else ""), required=True) }}
+                                <select name="servicio" id="selectServicioCita" class="form-select bg-dark text-white border-secondary" required>
+                                    <option value="">--- Seleccione ---</option>
+                                    <option value="1" {% if request.form.get('servicio') == '1' or (cita is defined and cita.servicio == 'Corte de Cabello') %}selected{% endif %}>Corte de Cabello - $7</option>
+                                    <option value="2" {% if request.form.get('servicio') == '2' or (cita is defined and cita.servicio == 'Arreglo de Barba Clásica') %}selected{% endif %}>Perfilado de Barba - $6</option>
+                                    <option value="3" {% if request.form.get('servicio') == '3' or (cita is defined and cita.servicio == 'Corte de Cabello + Barba') %}selected{% endif %}>Corte de Cabello + Barba - $12</option>
+                                    <option value="4" {% if request.form.get('servicio') == '4' or (cita is defined and cita.servicio == 'Tinte y Limpieza Facial') %}selected{% endif %}>Tinte y Limpieza Facial - $55</option>
+                                </select>
                             </div>
-                            {% for error in form.servicio.errors %}
-                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                            {% endfor %}
+                            <div id="servicio_error_feedback" class="text-danger small mt-1 d-none">
+                                <i class="bi bi-exclamation-circle me-1"></i>Debe seleccionar un servicio válido.
+                            </div>
                         </div>
                     </div>
 
@@ -186,13 +196,13 @@
                             {% if form.notas_cliente is defined %}
                                 {{ form.notas_cliente(class="form-control bg-dark text-white border-secondary", rows="2", placeholder="Detalles particulares del servicio o solicitud al barbero...") }}
                             {% else %}
-                                <textarea name="notas_cliente" class="form-control bg-dark text-white border-secondary", rows="2" placeholder="Detalles particulares del servicio o solicitud al barbero..."></textarea>
+                                <textarea name="notas_cliente" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Detalles particulares del servicio o solicitud al barbero..."></textarea>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-warning fw-bold text-dark py-2 shadow-sm">
+                        <button type="submit" class="btn btn-warning fw-bold text-dark py-2 shadow-sm" id="btnEnviarCita">
                             <i class="bi {% if editando %}bi-check-lg{% else %}bi-check2-circle{% endif %} me-1"></i>
                             {% if editando %}Guardar Cambios{% else %}Agendar Cita{% endif %}
                         </button>
@@ -208,11 +218,23 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Formato Capitalizado automático para el nombre del cliente
-        const inputCliente = document.querySelector("input[name='cliente']");
-        if (inputCliente && !inputCliente.readOnly) {
-            inputCliente.addEventListener("input", function() {
-                this.value = this.value.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+        const formCita = document.getElementById("formAgendarCita");
+        const inputCliente = document.getElementById("inputNombreCliente");
+        const selectServicio = document.getElementById("selectServicioCita");
+
+        if (formCita) {
+            formCita.addEventListener("submit", function(e) {
+                // Validación básica de seguridad: asegurar que haya texto y un servicio seleccionado
+                if (inputCliente && !inputCliente.readOnly && inputCliente.value.trim() === "") {
+                    inputCliente.classList.add("is-invalid");
+                    e.preventDefault();
+                    return;
+                }
+                if (selectServicio && selectServicio.value === "") {
+                    selectServicio.classList.add("is-invalid");
+                    e.preventDefault();
+                    return;
+                }
             });
         }
 
@@ -249,12 +271,12 @@
                 if (val === 'Transferencia Bancaria') {
                     infoTransf.classList.remove('d-none');
                     infoQR.classList.add('d-none');
-                    inputTransf.setAttribute('name', 'comprobante_pago');
+                    if (inputTransf) inputTransf.setAttribute('name', 'comprobante_pago');
                     if (inputQR) inputQR.removeAttribute('name');
                 } else if (val === 'Código QR / Deuna') {
                     infoQR.classList.remove('d-none');
                     infoTransf.classList.add('d-none');
-                    inputQR.setAttribute('name', 'comprobante_pago');
+                    if (inputQR) inputQR.setAttribute('name', 'comprobante_pago');
                     if (inputTransf) inputTransf.removeAttribute('name');
                 } else {
                     infoTransf.classList.add('d-none');

@@ -5,13 +5,45 @@
 {% block content %}
 <div class="container mt-4">
     <!-- Título arriba -->
-    <h3 class="text-warning fw-bold mb-3">CLIENTES</h3>
-    
-    <!-- Botón verde corregido (se quitó el </a> extra que lo rompía) -->
-    <div class="mb-4">
-        <a href="{{ url_for('formulario_cliente') }}" class="btn btn-success fw-bold text-white">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <h3 class="text-warning fw-bold mb-2 mb-md-0">CLIENTES</h3>
+        
+        <!-- Botón Nuevo Cliente -->
+        <a href="{{ url_for('formulario_cliente') }}" class="btn btn-success fw-bold text-white shadow-sm">
             <i class="fa-solid fa-plus me-1"></i> Nuevo Cliente
         </a>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- BARRA DE BÚSQUEDA PROFESIONAL CON LUPITA                          -->
+    <!-- ================================================================= -->
+    <div class="card bg-dark border-secondary p-3 mb-4 shadow-sm">
+        <form method="GET" action="{{ url_for('clientes') }}" class="row g-2 align-items-center">
+            <div class="col-md-7 col-lg-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-black border-secondary text-warning">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" 
+                           name="q" 
+                           id="inputBusquedaClientes"
+                           value="{{ busqueda or '' }}" 
+                           class="form-control bg-dark text-white border-secondary" 
+                           placeholder="Buscar por nombre, apellido, cédula, teléfono o correo..."
+                           autocomplete="off">
+                    {% if busqueda %}
+                    <a href="{{ url_for('clientes') }}" class="btn btn-outline-secondary" title="Limpiar búsqueda">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-5 col-lg-4 d-flex gap-2">
+                <button type="submit" class="btn btn-warning text-dark fw-bold px-3 w-100 shadow-sm">
+                    <i class="fa-solid fa-filter me-1"></i> Filtrar Clientes
+                </button>
+            </div>
+        </form>
     </div>
 
     <div class="table-responsive">
@@ -27,39 +59,66 @@
                 </tr>
             </thead>
             <tbody>
-                {% for c in clientes %}
-                <tr>
-                    <td><strong>{{ c.id }}</strong></td>
-                    <td>{{ c.nombre }}</td>
-                    <td>{{ c.apellido }}</td>
-                    <td>{{ c.telefono }}</td>
-                    <td>{{ c.email }}</td>
-                    <td class="text-center">
-                        <!-- Botón Ver -->
-                        <a href="{{ url_for('detalle_cliente', id=c.id) }}" class="btn btn-sm btn-outline-info me-1">
-                            <i class="fa-solid fa-eye"></i> Ver
-                        </a>
-                        
-                        <!-- Botón Editar -->
-                        <a href="{{ url_for('editar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-warning me-1">
-                            <i class="fa-solid fa-pen-to-square"></i> Editar
-                        </a>
-                        
-                        <!-- Botón Borrar (con alerta de confirmación) -->
-                        <a href="{{ url_for('eliminar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar a {{ c.nombre }}?');">
-                            <i class="fa-solid fa-trash-can"></i> Borrar
-                        </a>
-                    </td>
-                </tr>
+                {% if clientes %}
+                    {% for c in clientes %}
+                    <tr>
+                        <td><strong>{{ c.id }}</strong></td>
+                        <td class="fw-bold text-warning">{{ c.nombre }}</td>
+                        <td>{{ c.apellido }}</td>
+                        <td>{{ c.telefono or 'S/N' }}</td>
+                        <td>{{ c.email or 'S/N' }}</td>
+                        <td class="text-center">
+                            <!-- Botón Ver -->
+                            <a href="{{ url_for('detalle_cliente', id=c.id) }}" class="btn btn-sm btn-outline-info me-1" title="Ver detalle">
+                                <i class="fa-solid fa-eye"></i> Ver
+                            </a>
+                            
+                            <!-- Botón Editar -->
+                            <a href="{{ url_for('editar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-warning me-1" title="Editar cliente">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </a>
+                            
+                            <!-- Botón Borrar (con alerta de confirmación) -->
+                            <a href="{{ url_for('eliminar_cliente', id=c.id) }}" class="btn btn-sm btn-outline-danger" title="Inactivar cliente" onclick="return confirm('¿Estás seguro de eliminar a {{ c.nombre }}?');">
+                                <i class="fa-solid fa-trash-can"></i> Borrar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 {% else %}
                 <tr>
                     <td colspan="6" class="text-center py-4 text-muted">
                         <em>No hay clientes registrados en el sistema.</em>
                     </td>
                 </tr>
-                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>
+
+    <!-- SECCIÓN DE PAGINACIÓN ESTILIZADA -->
+    {% if total_pages > 1 %}
+    <nav aria-label="Navegación de clientes" class="my-4">
+        <ul class="pagination justify-content-center">
+            <!-- Botón Anterior -->
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page - 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Anterior</a>
+            </li>
+
+            <!-- Números de página dinámicos -->
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link {% if p == page %}bg-warning text-dark fw-bold border-warning{% else %}bg-dark text-white border-secondary{% endif %}" href="?page={{ p }}{% if busqueda %}&q={{ busqueda }}{% endif %}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            <!-- Botón Siguiente -->
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page + 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+
 </div>
 {% endblock %}

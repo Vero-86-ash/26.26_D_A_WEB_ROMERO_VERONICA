@@ -46,17 +46,33 @@
 </style>
 
 <div class="container my-5">
-    <!-- Encabezado -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
-        <div>
+    <!-- Encabezado y Barra de Búsqueda Profesional con Lupita -->
+    <div class="row align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div class="col-md-6 mb-3 mb-md-0">
             <h2 class="text-white fw-bold mb-1">
                 <i class="bi bi-box-seam me-2 text-warning"></i>Gestión de Productos
             </h2>
             <p class="text-light opacity-75 mb-0">Control de inventario, costos, precios e imágenes de la barbería.</p>
         </div>
-        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-warning fw-bold text-dark shadow px-3 py-2 mt-2 mt-md-0">
-            <i class="bi bi-plus-circle me-1"></i> + Nuevo Producto
-        </a>
+        <div class="col-md-6 d-flex flex-wrap justify-content-md-end gap-2 align-items-center">
+            <!-- Formulario de Búsqueda con Lupita -->
+            <form method="GET" action="{{ url_for('productos') }}" class="input-group shadow-sm" style="max-width: 320px;">
+                <span class="input-group-text bg-dark text-warning border-secondary ps-3">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="q" value="{{ busqueda }}" class="form-control bg-dark text-white border-secondary py-2" placeholder="Buscar producto...">
+                {% if busqueda %}
+                    <a href="{{ url_for('productos') }}" class="btn btn-outline-secondary text-light border-secondary" title="Limpiar búsqueda">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% endif %}
+                <button class="btn btn-warning fw-bold text-dark px-3" type="submit">Buscar</button>
+            </form>
+
+            <a href="{{ url_for('nuevo_producto') }}" class="btn btn-warning fw-bold text-dark shadow px-3 py-2">
+                <i class="bi bi-plus-circle me-1"></i> + Nuevo Producto
+            </a>
+        </div>
     </div>
 
     <!-- Mensajes Flash del Sistema -->
@@ -117,7 +133,7 @@
                                 ${{ "%.2f"|format(p.precio) }}
                             </td>
 
-                            <!-- Costo de compra con soporte para columna costo o costo_compra -->
+                            <!-- Costo de compra -->
                             <td class="text-end text-light opacity-75">
                                 ${{ "%.2f"|format(p.costo if p.costo is not none else (p.costo_compra or 0)) }}
                             </td>
@@ -146,7 +162,7 @@
                                 {% endif %}
                             </td>
 
-                            <!-- Botones de Acción con Bootstrap Icons estables -->
+                            <!-- Botones de Acción -->
                             <td class="text-center">
                                 <div class="btn-group shadow-sm" role="group">
                                     <a href="{{ url_for('detalle_producto', id=p.id) }}" 
@@ -191,5 +207,26 @@
             </table>
         </div>
     </div>
+
+    <!-- Componente Universal de Paginación -->
+    {% if total_pages > 1 %}
+    <nav aria-label="Navegación de productos" class="my-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page - 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Anterior</a>
+            </li>
+
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link {% if p == page %}bg-warning text-dark fw-bold border-warning{% else %}bg-dark text-white border-secondary{% endif %}" href="?page={{ p }}{% if busqueda %}&q={{ busqueda }}{% endif %}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link bg-dark text-warning border-secondary" href="?page={{ page + 1 }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}

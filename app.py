@@ -428,7 +428,7 @@ def logout():
 
 
 # -----------------------------------------------------------------------------
-# RUTAS PRINCIPALES Y DASHBOARD (CON EVENTOS Y ACTIVIDAD RECIENTE)
+# RUTAS PRINCIPALES Y DASHBOARD
 # -----------------------------------------------------------------------------
 @app.route('/')
 def home():
@@ -537,9 +537,9 @@ def dashboard():
     )
 
 
-# =============================================================================
-# 1. MÓDULO DE CLIENTES (PostgreSQL)
-# =============================================================================
+# -----------------------------------------------------------------------------
+# 1. MÓDULO DE CLIENTES (Paginación Profesional y Orden Alfabético)
+# -----------------------------------------------------------------------------
 @app.route('/clientes')
 @login_required
 @admin_required
@@ -572,7 +572,7 @@ def clientes():
                   COALESCE(telefono, '') ILIKE %s OR 
                   COALESCE(email, '') ILIKE %s
               )
-            ORDER BY id DESC
+            ORDER BY nombre ASC, apellido ASC
             LIMIT %s OFFSET %s
             """,
             (
@@ -604,19 +604,14 @@ def clientes():
         'clientes.html',
         clientes=clientes_db,
         busqueda=busqueda,
-        pagina_actual=pagina,
-        total_paginas=total_paginas,
+        page=pagina,
+        total_pages=total_paginas,
         total_registros=total_registros,
-        endpoint='clientes',
     )
 
 
 @app.route('/clientes/nuevo', methods=['GET', 'POST'], endpoint='nuevo_cliente')
-@app.route(
-    '/clientes/formulario',
-    methods=['GET', 'POST'],
-    endpoint='formulario_cliente',
-)
+@app.route('/clientes/formulario', methods=['GET', 'POST'], endpoint='formulario_cliente')
 @login_required
 @admin_required
 def nuevo_cliente():
@@ -625,37 +620,17 @@ def nuevo_cliente():
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            cedula = (
-                form.cedula.data.strip()
-                if hasattr(form, 'cedula') and form.cedula.data
-                else None
-            )
+            cedula = form.cedula.data.strip() if hasattr(form, 'cedula') and form.cedula.data else None
             nombre = form.nombre.data.strip()
             apellido = form.apellido.data.strip()
-            telefono = (
-                form.telefono.data.strip()
-                if hasattr(form, 'telefono') and form.telefono.data
-                else None
-            )
-            email = (
-                form.email.data.strip().lower()
-                if hasattr(form, 'email') and form.email.data
-                else None
-            )
+            telefono = form.telefono.data.strip() if hasattr(form, 'telefono') and form.telefono.data else None
+            email = form.email.data.strip().lower() if hasattr(form, 'email') and form.email.data else None
 
             if cedula:
-                cursor.execute(
-                    "SELECT id FROM clientes WHERE cedula = %s AND estado = 'Activo'",
-                    (cedula,),
-                )
+                cursor.execute("SELECT id FROM clientes WHERE cedula = %s AND estado = 'Activo'", (cedula,))
                 if cursor.fetchone():
-                    flash(
-                        'Ya existe un cliente activo registrado con esa cédula.',
-                        'warning',
-                    )
-                    return render_template(
-                        'formulario_cliente.html', form=form, titulo='Nuevo Cliente'
-                    )
+                    flash('Ya existe un cliente activo registrado con esa cédula.', 'warning')
+                    return render_template('formulario_cliente.html', form=form, titulo='Nuevo Cliente')
 
             cursor.execute(
                 """
@@ -672,24 +647,15 @@ def nuevo_cliente():
 
         except psycopg2.IntegrityError as ie:
             conn.rollback()
-            print(f'Violación de integridad: {ie}')
-            flash(
-                'Error: Cédula, teléfono o correo ya registrados en la base de datos.',
-                'danger',
-            )
+            flash('Error: Cédula, teléfono o correo ya registrados en la base de datos.', 'danger')
         except Exception as e:
             conn.rollback()
-            print(f'Error SQL al registrar cliente: {e}')
-            flash(
-                f'Ocurrió un error inesperado al registrar el cliente: {e}', 'danger'
-            )
+            flash(f'Ocurrió un error inesperado al registrar el cliente: {e}', 'danger')
         finally:
             cursor.close()
             conn.close()
 
-    return render_template(
-        'formulario_cliente.html', form=form, titulo='Nuevo Cliente'
-    )
+    return render_template('formulario_cliente.html', form=form, titulo='Nuevo Cliente')
 
 
 @app.route('/clientes/detalle/<int:id>')
@@ -699,15 +665,11 @@ def detalle_cliente(id):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute(
-            "SELECT * FROM clientes WHERE id = %s AND estado = 'Activo'", (id,)
-        )
+        cursor.execute("SELECT * FROM clientes WHERE id = %s AND estado = 'Activo'", (id,))
         row = cursor.fetchone()
 
         if not row:
-            flash(
-                'El cliente solicitado no existe o se encuentra inactivo.', 'warning'
-            )
+            flash('El cliente solicitado no existe o se encuentra inactivo.', 'warning')
             return redirect(url_for('clientes'))
 
         cursor.execute(
@@ -725,16 +687,13 @@ def detalle_cliente(id):
             c['barbero'] = BARBEROS_MAP.get(c.get('barbero_id'), 'Andrés Hernández')
 
     except Exception as e:
-        print(f'Error al obtener detalle del cliente: {e}')
         flash('Error al consultar los datos del cliente.', 'danger')
         return redirect(url_for('clientes'))
     finally:
         cursor.close()
         conn.close()
 
-    return render_template(
-        'detalle_cliente.html', cliente=row, historial_citas=citas_cliente
-    )
+    return render_template('detalle_cliente.html', cliente=row, historial_citas=citas_cliente)
 
 
 @app.route('/clientes/editar/<int:id>', methods=['GET', 'POST'])
@@ -745,9 +704,7 @@ def editar_cliente(id):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
     try:
-        cursor.execute(
-            "SELECT * FROM clientes WHERE id = %s AND estado = 'Activo'", (id,)
-        )
+        cursor.execute("SELECT * FROM clientes WHERE id = %s AND estado = 'Activo'", (id,))
         cliente_encontrado = cursor.fetchone()
 
         if not cliente_encontrado:
@@ -757,37 +714,17 @@ def editar_cliente(id):
         form = ClienteForm()
 
         if form.validate_on_submit():
-            cedula = (
-                form.cedula.data.strip()
-                if hasattr(form, 'cedula') and form.cedula.data
-                else None
-            )
+            cedula = form.cedula.data.strip() if hasattr(form, 'cedula') and form.cedula.data else None
             nombre = form.nombre.data.strip()
             apellido = form.apellido.data.strip()
-            telefono = (
-                form.telefono.data.strip()
-                if hasattr(form, 'telefono') and form.telefono.data
-                else None
-            )
-            email = (
-                form.email.data.strip().lower()
-                if hasattr(form, 'email') and form.email.data
-                else None
-            )
+            telefono = form.telefono.data.strip() if hasattr(form, 'telefono') and form.telefono.data else None
+            email = form.email.data.strip().lower() if hasattr(form, 'email') and form.email.data else None
 
             if cedula:
-                cursor.execute(
-                    'SELECT id FROM clientes WHERE cedula = %s AND id != %s AND estado = \'Activo\'',
-                    (cedula, id),
-                )
+                cursor.execute("SELECT id FROM clientes WHERE cedula = %s AND id != %s AND estado = 'Activo'", (cedula, id))
                 if cursor.fetchone():
-                    flash(
-                        'La cédula ingresada ya pertenece a otro cliente registrado.',
-                        'warning',
-                    )
-                    return render_template(
-                        'formulario_cliente.html', form=form, titulo='Editar Cliente'
-                    )
+                    flash('La cédula ingresada ya pertenece a otro cliente registrado.', 'warning')
+                    return render_template('formulario_cliente.html', form=form, titulo='Editar Cliente')
 
             cursor.execute(
                 """
@@ -812,17 +749,12 @@ def editar_cliente(id):
 
     except Exception as e:
         conn.rollback()
-        print(f'Error al editar cliente: {e}')
-        flash(
-            f'Ocurrió un error al intentar actualizar el cliente: {e}', 'danger'
-        )
+        flash(f'Ocurrió un error al intentar actualizar el cliente: {e}', 'danger')
     finally:
         cursor.close()
         conn.close()
 
-    return render_template(
-        'formulario_cliente.html', form=form, titulo='Editar Cliente'
-    )
+    return render_template('formulario_cliente.html', form=form, titulo='Editar Cliente')
 
 
 @app.route('/clientes/eliminar/<int:id>', methods=['POST', 'GET'])
@@ -832,14 +764,11 @@ def eliminar_cliente(id):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute(
-            "UPDATE clientes SET estado = 'Inactivo' WHERE id = %s", (id,)
-        )
+        cursor.execute("UPDATE clientes SET estado = 'Inactivo' WHERE id = %s", (id,))
         conn.commit()
         flash('¡Cliente deshabilitado correctamente del sistema!', 'warning')
     except Exception as e:
         conn.rollback()
-        print(f'Error al deshabilitar cliente: {e}')
         flash(f'No se pudo deshabilitar el cliente: {e}', 'danger')
     finally:
         cursor.close()
@@ -849,7 +778,7 @@ def eliminar_cliente(id):
 
 
 # -----------------------------------------------------------------------------
-# 2. GESTIÓN DE PRODUCTOS, CATÁLOGO Y BUSCADOR (LUPITA)
+# 2. GESTIÓN DE PRODUCTOS, CATÁLOGO (Paginación y Orden Alfabético estricto A-Z)
 # -----------------------------------------------------------------------------
 @app.route('/productos')
 @app.route('/catalogo')
@@ -857,61 +786,102 @@ def eliminar_cliente(id):
 def productos():
     rol = session.get('rol', 'Cliente')
     busqueda = request.args.get('q', '').strip()
+    try:
+        pagina = int(request.args.get('page', 1))
+        if pagina < 1:
+            pagina = 1
+    except (ValueError, TypeError):
+        pagina = 1
+
+    por_pagina = 8
+    offset = (pagina - 1) * por_pagina
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
+    param_busqueda = f'%{busqueda}%'
+
     try:
         if rol == 'Administrador':
-            query = """
-                SELECT p.*, COALESCE(c.nombre, 'General') AS categoria
+            query_count = """
+                SELECT COUNT(*) AS total 
+                FROM productos p
+                LEFT JOIN categorias c ON p.categoria_id = c.id
+                WHERE 1=1
+            """
+            query_data = """
+                SELECT p.*, COALESCE(c.nombre, 'General') AS categoria, COUNT(*) OVER() AS total_count
                 FROM productos p
                 LEFT JOIN categorias c ON p.categoria_id = c.id
                 WHERE 1=1
             """
             params = []
             if busqueda:
-                query += """ AND (
+                filtro_sql = """ AND (
                     p.nombre ILIKE %s OR 
                     COALESCE(p.codigo_barras, '') ILIKE %s OR 
                     COALESCE(c.nombre, '') ILIKE %s
                 )"""
-                p_term = f"%{busqueda}%"
-                params = [p_term, p_term, p_term]
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params = [param_busqueda, param_busqueda, param_busqueda]
 
-            query += " ORDER BY p.id ASC"
-            cursor.execute(query, tuple(params))
+            cursor.execute(query_count, tuple(params))
+            total_registros = cursor.fetchone()['total']
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY p.nombre ASC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
             items = cursor.fetchall()
+
             return render_template(
                 'productos.html', 
                 productos=items, 
                 lista_productos=items,
-                busqueda=busqueda
+                busqueda=busqueda,
+                page=pagina,
+                total_pages=total_paginas,
+                total_registros=total_registros
             )
         else:
-            query = """
-                SELECT p.*, COALESCE(c.nombre, 'General') AS categoria
+            query_count = """
+                SELECT COUNT(*) AS total 
+                FROM productos p
+                LEFT JOIN categorias c ON p.categoria_id = c.id
+                WHERE p.estado = 'Activo' AND p.stock > 0
+            """
+            query_data = """
+                SELECT p.*, COALESCE(c.nombre, 'General') AS categoria, COUNT(*) OVER() AS total_count
                 FROM productos p
                 LEFT JOIN categorias c ON p.categoria_id = c.id
                 WHERE p.estado = 'Activo' AND p.stock > 0
             """
             params = []
             if busqueda:
-                query += """ AND (
+                filtro_sql = """ AND (
                     p.nombre ILIKE %s OR 
                     COALESCE(p.codigo_barras, '') ILIKE %s OR 
                     COALESCE(c.nombre, '') ILIKE %s
                 )"""
-                p_term = f"%{busqueda}%"
-                params = [p_term, p_term, p_term]
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params = [param_busqueda, param_busqueda, param_busqueda]
 
-            query += " ORDER BY p.id ASC"
-            cursor.execute(query, tuple(params))
+            cursor.execute(query_count, tuple(params))
+            total_registros = cursor.fetchone()['total']
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY p.nombre ASC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
             items = cursor.fetchall()
+
             return render_template(
                 'productos_cliente.html', 
                 productos=items, 
                 lista_productos=items,
-                busqueda=busqueda
+                busqueda=busqueda,
+                page=pagina,
+                total_pages=total_paginas,
+                total_registros=total_registros
             )
     finally:
         cursor.close()
@@ -930,56 +900,21 @@ def nuevo_producto():
             nombre = form.nombre.data.strip()
             precio = float(form.precio.data)
             stock = int(form.stock.data)
-            costo = (
-                float(form.costo.data)
-                if hasattr(form, 'costo') and form.costo.data is not None
-                else 0.00
-            )
-
-            if (
-                hasattr(form, 'codigo_barras')
-                and form.codigo_barras.data
-                and form.codigo_barras.data.strip()
-            ):
-                codigo_barras = form.codigo_barras.data.strip()
-            else:
-                codigo_barras = f'786{random.randint(1000, 9999)}'
-
-            stock_minimo = (
-                int(form.stock_minimo.data)
-                if hasattr(form, 'stock_minimo') and form.stock_minimo.data is not None
-                else 3
-            )
-            unidad_medida = (
-                form.unidad_medida.data.strip()
-                if hasattr(form, 'unidad_medida') and form.unidad_medida.data
-                else 'Unidad'
-            )
+            costo = float(form.costo.data) if hasattr(form, 'costo') and form.costo.data is not None else 0.00
+            codigo_barras = form.codigo_barras.data.strip() if hasattr(form, 'codigo_barras') and form.codigo_barras.data else f'786{random.randint(1000, 9999)}'
+            stock_minimo = int(form.stock_minimo.data) if hasattr(form, 'stock_minimo') and form.stock_minimo.data is not None else 3
+            unidad_medida = form.unidad_medida.data.strip() if hasattr(form, 'unidad_medida') and form.unidad_medida.data else 'Unidad'
 
             imagen = 'https://images.unsplash.com/photo-1597854710119-a5a84396736a?w=600'
             archivo_imagen = request.files.get('archivo_imagen')
 
-            if (
-                archivo_imagen
-                and archivo_imagen.filename != ''
-                and allowed_file(archivo_imagen.filename)
-            ):
+            if archivo_imagen and archivo_imagen.filename != '' and allowed_file(archivo_imagen.filename):
                 nombre_seguro = secure_filename(archivo_imagen.filename)
-                nombre_final = (
-                    f'prod_{random.randint(10000, 99999)}_{nombre_seguro}'
-                )
-                ruta_guardado = os.path.join(
-                    app.root_path, app.config['UPLOAD_FOLDER'], nombre_final
-                )
+                nombre_final = f'prod_{random.randint(10000, 99999)}_{nombre_seguro}'
+                ruta_guardado = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], nombre_final)
                 archivo_imagen.save(ruta_guardado)
-                imagen = url_for(
-                    'static', filename=f'uploads/productos/{nombre_final}'
-                )
-            elif (
-                hasattr(form, 'imagen_url')
-                and form.imagen_url.data
-                and form.imagen_url.data.strip()
-            ):
+                imagen = url_for('static', filename=f'uploads/productos/{nombre_final}')
+            elif hasattr(form, 'imagen_url') and form.imagen_url.data and form.imagen_url.data.strip():
                 imagen = form.imagen_url.data.strip()
 
             cursor.execute(
@@ -990,16 +925,7 @@ def nuevo_producto():
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Activo')
                 """,
-                (
-                    codigo_barras,
-                    nombre,
-                    precio,
-                    costo,
-                    stock,
-                    stock_minimo,
-                    unidad_medida,
-                    imagen,
-                ),
+                (codigo_barras, nombre, precio, costo, stock, stock_minimo, unidad_medida, imagen),
             )
 
             conn.commit()
@@ -1008,15 +934,10 @@ def nuevo_producto():
 
         except Exception as e:
             conn.rollback()
-            print(f'Error SQL al registrar producto: {e}')
             flash(f'Ocurrió un error al registrar el producto: {e}', 'danger')
         finally:
             cursor.close()
             conn.close()
-
-    elif request.method == 'POST':
-        for campo, errores in form.errors.items():
-            flash(f"Error en {campo}: {', '.join(errores)}", 'danger')
 
     return render_template('formulario_producto.html', form=form, editando=False)
 
@@ -1033,9 +954,7 @@ def detalle_producto(id):
         if not producto_encontrado:
             flash('Producto no encontrado.', 'warning')
             return redirect(url_for('productos'))
-        return render_template(
-            'detalle_producto.html', producto=producto_encontrado
-        )
+        return render_template('detalle_producto.html', producto=producto_encontrado)
     finally:
         cursor.close()
         conn.close()
@@ -1060,55 +979,23 @@ def editar_producto(id):
         if form.validate_on_submit():
             nombre = form.nombre.data.strip()
             precio = float(form.precio.data)
-            costo = (
-                float(form.costo.data)
-                if hasattr(form, 'costo') and form.costo.data is not None
-                else float(producto_encontrado.get('costo') or 0.0)
-            )
+            costo = float(form.costo.data) if hasattr(form, 'costo') and form.costo.data is not None else float(producto_encontrado.get('costo') or 0.0)
             stock = int(form.stock.data)
-            stock_minimo = (
-                int(form.stock_minimo.data)
-                if hasattr(form, 'stock_minimo') and form.stock_minimo.data is not None
-                else 3
-            )
-            unidad = (
-                form.unidad_medida.data.strip()
-                if hasattr(form, 'unidad_medida') and form.unidad_medida.data
-                else 'Unidad'
-            )
-            codigo = (
-                form.codigo_barras.data.strip()
-                if hasattr(form, 'codigo_barras') and form.codigo_barras.data
-                else producto_encontrado.get('codigo_barras')
-            )
-            nuevo_estado = request.form.get(
-                'estado', producto_encontrado.get('estado', 'Activo')
-            )
+            stock_minimo = int(form.stock_minimo.data) if hasattr(form, 'stock_minimo') and form.stock_minimo.data is not None else 3
+            unidad = form.unidad_medida.data.strip() if hasattr(form, 'unidad_medida') and form.unidad_medida.data else 'Unidad'
+            codigo = form.codigo_barras.data.strip() if hasattr(form, 'codigo_barras') and form.codigo_barras.data else producto_encontrado.get('codigo_barras')
+            nuevo_estado = request.form.get('estado', producto_encontrado.get('estado', 'Activo'))
 
             imagen = producto_encontrado.get('imagen_url')
             archivo_imagen = request.files.get('archivo_imagen')
 
-            if (
-                archivo_imagen
-                and archivo_imagen.filename != ''
-                and allowed_file(archivo_imagen.filename)
-            ):
+            if archivo_imagen and archivo_imagen.filename != '' and allowed_file(archivo_imagen.filename):
                 nombre_seguro = secure_filename(archivo_imagen.filename)
-                nombre_final = (
-                    f'prod_{random.randint(10000, 99999)}_{nombre_seguro}'
-                )
-                ruta_guardado = os.path.join(
-                    app.root_path, app.config['UPLOAD_FOLDER'], nombre_final
-                )
+                nombre_final = f'prod_{random.randint(10000, 99999)}_{nombre_seguro}'
+                ruta_guardado = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], nombre_final)
                 archivo_imagen.save(ruta_guardado)
-                imagen = url_for(
-                    'static', filename=f'uploads/productos/{nombre_final}'
-                )
-            elif (
-                hasattr(form, 'imagen_url')
-                and form.imagen_url.data
-                and form.imagen_url.data.strip()
-            ):
+                imagen = url_for('static', filename=f'uploads/productos/{nombre_final}')
+            elif hasattr(form, 'imagen_url') and form.imagen_url.data and form.imagen_url.data.strip():
                 imagen = form.imagen_url.data.strip()
 
             cursor.execute(
@@ -1119,18 +1006,7 @@ def editar_producto(id):
                     imagen_url = %s, estado = %s
                 WHERE id = %s
                 """,
-                (
-                    codigo,
-                    nombre,
-                    precio,
-                    costo,
-                    stock,
-                    stock_minimo,
-                    unidad,
-                    imagen,
-                    nuevo_estado,
-                    id,
-                ),
+                (codigo, nombre, precio, costo, stock, stock_minimo, unidad, imagen, nuevo_estado, id),
             )
 
             conn.commit()
@@ -1148,9 +1024,7 @@ def editar_producto(id):
             if hasattr(form, 'stock_minimo'):
                 form.stock_minimo.data = producto_encontrado.get('stock_minimo', 3)
             if hasattr(form, 'unidad_medida'):
-                form.unidad_medida.data = producto_encontrado.get(
-                    'unidad_medida', 'Unidad'
-                )
+                form.unidad_medida.data = producto_encontrado.get('unidad_medida', 'Unidad')
             if hasattr(form, 'imagen_url'):
                 form.imagen_url.data = producto_encontrado.get('imagen_url') or ''
 
@@ -1169,10 +1043,7 @@ def editar_producto(id):
     )
 
 
-@app.route(
-    '/productos/cambiar-estado/<int:id>/<string:nuevo_estado>',
-    methods=['GET', 'POST'],
-)
+@app.route('/productos/cambiar-estado/<int:id>/<string:nuevo_estado>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def cambiar_estado_producto(id, nuevo_estado):
@@ -1183,15 +1054,9 @@ def cambiar_estado_producto(id, nuevo_estado):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute(
-            'UPDATE productos SET estado = %s WHERE id = %s', (nuevo_estado, id)
-        )
+        cursor.execute('UPDATE productos SET estado = %s WHERE id = %s', (nuevo_estado, id))
         conn.commit()
-        msg = (
-            'desactivado del catálogo'
-            if nuevo_estado == 'Inactivo'
-            else 'reactivado con éxito'
-        )
+        msg = 'desactivado del catálogo' if nuevo_estado == 'Inactivo' else 'reactivado con éxito'
         flash(f'El producto ha sido {msg}.', 'info')
     except Exception as e:
         conn.rollback()
@@ -1232,20 +1097,14 @@ def agregar_al_carrito(producto_id):
         cant_actual = carrito.get(p_key, {}).get('cantidad', 0)
 
         if cant_actual + 1 > prod['stock']:
-            flash(
-                f"Solo disponemos de {prod['stock']} unidades de {prod['nombre']}.",
-                'warning',
-            )
+            flash(f"Solo disponemos de {prod['stock']} unidades de {prod['nombre']}.", 'warning')
             return redirect(url_for('productos'))
 
         carrito[p_key] = {
             'id': prod['id'],
             'nombre': prod['nombre'],
             'precio': float(prod['precio']),
-            'imagen_url': (
-                prod['imagen_url']
-                or 'https://images.unsplash.com/photo-1597854710119-a5a84396736a?w=400'
-            ),
+            'imagen_url': prod['imagen_url'] or 'https://images.unsplash.com/photo-1597854710119-a5a84396736a?w=400',
             'cantidad': cant_actual + 1,
         }
         session['carrito'] = carrito
@@ -1287,7 +1146,7 @@ def eliminar_del_carrito(producto_id):
 
 
 # -----------------------------------------------------------------------------
-# 4. FINALIZAR COMPRA: SECUENCIAL PENDIENTE DINÁMICO (NO VIOLA UNIQUE EN SRI)
+# 4. FINALIZAR COMPRA: CHECKOUT
 # -----------------------------------------------------------------------------
 @app.route('/carrito/checkout', methods=['POST'])
 @app.route('/carrito/pagar', methods=['POST'])
@@ -1306,16 +1165,12 @@ def checkout_factura():
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute(
-            'SELECT id FROM clientes WHERE usuario_id = %s LIMIT 1', (usuario_id,)
-        )
+        cursor.execute('SELECT id FROM clientes WHERE usuario_id = %s LIMIT 1', (usuario_id,))
         cli = cursor.fetchone()
         if cli:
             cliente_id = cli['id']
         else:
-            cursor.execute(
-                "SELECT id FROM clientes WHERE cedula = '9999999999' LIMIT 1"
-            )
+            cursor.execute("SELECT id FROM clientes WHERE cedula = '9999999999' LIMIT 1")
             cf = cursor.fetchone()
             if cf:
                 cliente_id = cf['id']
@@ -1331,10 +1186,7 @@ def checkout_factura():
 
         subtotal = 0.0
         for p_id, item in carrito.items():
-            cursor.execute(
-                'SELECT stock, precio FROM productos WHERE id = %s FOR UPDATE',
-                (int(p_id),),
-            )
+            cursor.execute('SELECT stock, precio FROM productos WHERE id = %s FOR UPDATE', (int(p_id),))
             p_db = cursor.fetchone()
             if not p_db or p_db['stock'] < item['cantidad']:
                 conn.rollback()
@@ -1353,44 +1205,18 @@ def checkout_factura():
         cursor.execute(
             """
             INSERT INTO facturas (
-                num_factura,
-                numero_factura,
-                cliente_id, 
-                usuario_id, 
-                subtotal, 
-                iva, 
-                impuestos,
-                descuento, 
-                total, 
-                metodo_pago, 
-                comprobante_transferencia, 
-                estado,
-                fecha,
-                activo
+                num_factura, numero_factura, cliente_id, usuario_id, 
+                subtotal, iva, impuestos, descuento, total, 
+                metodo_pago, comprobante_transferencia, estado, fecha, activo
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s, 0.00, %s, %s, %s, 'Pendiente', CURRENT_TIMESTAMP, TRUE)
             RETURNING id
             """,
-            (
-                nro_factura,
-                nro_factura,
-                cliente_id,
-                usuario_id,
-                subtotal,
-                iva,
-                iva,
-                total,
-                metodo_pago,
-                comprobante,
-            ),
+            (nro_factura, nro_factura, cliente_id, usuario_id, subtotal, iva, iva, total, metodo_pago, comprobante),
         )
         factura_id = cursor.fetchone()['id']
 
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'factura_detalles'
-        """)
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'factura_detalles'")
         cols_existentes = [r['column_name'] for r in cursor.fetchall()]
 
         for p_id, item in carrito.items():
@@ -1402,21 +1228,16 @@ def checkout_factura():
             valores = [factura_id, int(p_id), cant]
 
             if 'precio_unitario' in cols_existentes:
-                campos.append('precio_unitario')
-                valores.append(precio)
+                campos.append('precio_unitario'); valores.append(precio)
             elif 'precio' in cols_existentes:
-                campos.append('precio')
-                valores.append(precio)
+                campos.append('precio'); valores.append(precio)
 
             if 'subtotal' in cols_existentes:
-                campos.append('subtotal')
-                valores.append(sub_item)
+                campos.append('subtotal'); valores.append(sub_item)
             if 'subtotal_linea' in cols_existentes:
-                campos.append('subtotal_linea')
-                valores.append(sub_item)
+                campos.append('subtotal_linea'); valores.append(sub_item)
             if 'total' in cols_existentes:
-                campos.append('total')
-                valores.append(sub_item)
+                campos.append('total'); valores.append(sub_item)
 
             placeholders = ', '.join(['%s'] * len(campos))
             cols_str = ', '.join(campos)
@@ -1427,28 +1248,17 @@ def checkout_factura():
             except Exception as e_det:
                 print('Advertencia al insertar detalle:', e_det)
 
-            cursor.execute(
-                """
-                UPDATE productos 
-                SET stock = GREATEST(0, stock - %s) 
-                WHERE id = %s
-                """,
-                (cant, int(p_id)),
-            )
+            cursor.execute("UPDATE productos SET stock = GREATEST(0, stock - %s) WHERE id = %s", (cant, int(p_id)))
 
         conn.commit()
         session.pop('carrito', None)
         session.modified = True
 
-        flash(
-            '¡Pedido registrado exitosamente! Su compra se encuentra Pendiente de Confirmación por el Administrador.',
-            'warning',
-        )
+        flash('¡Pedido registrado exitosamente! Su compra se encuentra Pendiente de Confirmación por el Administrador.', 'warning')
         return redirect(url_for('facturacion'))
 
     except Exception as e:
         conn.rollback()
-        print('ERROR CRÍTICO AL PROCESAR PEDIDO:', e)
         flash(f'Error al procesar el pedido: {e}', 'danger')
         return redirect(url_for('ver_carrito'))
     finally:
@@ -1457,7 +1267,7 @@ def checkout_factura():
 
 
 # -----------------------------------------------------------------------------
-# 5. GESTIÓN Y LISTADO GENERAL DE FACTURACIÓN (CON BUSCADOR CON LUPITA)
+# 5. GESTIÓN Y LISTADO GENERAL DE FACTURACIÓN (Con Paginación Profesional)
 # -----------------------------------------------------------------------------
 @app.route('/facturacion')
 @login_required
@@ -1465,12 +1275,30 @@ def facturacion():
     rol = session.get('rol', 'Cliente')
     usuario_actual_id = session.get('usuario_id')
     busqueda = request.args.get('q', '').strip()
+    try:
+        pagina = int(request.args.get('page', 1))
+        if pagina < 1:
+            pagina = 1
+    except (ValueError, TypeError):
+        pagina = 1
+
+    por_pagina = 8
+    offset = (pagina - 1) * por_pagina
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
+    param_busqueda = f'%{busqueda}%'
+
     try:
         if rol == 'Administrador':
-            query = """
+            query_count = """
+                SELECT COUNT(*) AS total
+                FROM facturas f
+                LEFT JOIN clientes c ON f.cliente_id = c.id
+                LEFT JOIN usuarios u ON f.usuario_id = u.id
+                WHERE f.estado != 'Inactivo'
+            """
+            query_data = """
                 SELECT 
                     f.id,
                     COALESCE(f.numero_factura, f.num_factura, '#' || f.id::text) AS numero_factura,
@@ -1488,7 +1316,8 @@ def facturacion():
                     ) AS cliente,
                     COALESCE(c.email, u.email, 'S/C') AS identificacion,
                     COALESCE(f.comprobante_transferencia, '') AS comprobante_transferencia,
-                    COALESCE(f.activo, TRUE) AS activo
+                    COALESCE(f.activo, TRUE) AS activo,
+                    COUNT(*) OVER() AS total_count
                 FROM facturas f
                 LEFT JOIN clientes c ON f.cliente_id = c.id
                 LEFT JOIN usuarios u ON f.usuario_id = u.id
@@ -1496,7 +1325,7 @@ def facturacion():
             """
             params = []
             if busqueda:
-                query += """ AND (
+                filtro_sql = """ AND (
                     f.numero_factura ILIKE %s OR 
                     f.num_factura ILIKE %s OR 
                     c.nombre ILIKE %s OR 
@@ -1504,15 +1333,36 @@ def facturacion():
                     u.nombre_completo ILIKE %s OR 
                     COALESCE(f.comprobante_transferencia, '') ILIKE %s
                 )"""
-                p_term = f"%{busqueda}%"
-                params = [p_term, p_term, p_term, p_term, p_term, p_term]
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params = [param_busqueda]*6
 
-            query += " ORDER BY f.id DESC"
-            cursor.execute(query, tuple(params))
+            cursor.execute(query_count, tuple(params))
+            total_registros = cursor.fetchone()['total']
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY f.id DESC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
             facturas = cursor.fetchall()
-            return render_template('facturacion.html', facturas=facturas, es_admin=True, busqueda=busqueda)
+
+            return render_template(
+                'facturacion.html', 
+                facturas=facturas, 
+                es_admin=True, 
+                busqueda=busqueda,
+                page=pagina,
+                total_pages=total_paginas,
+                total_registros=total_registros
+            )
         else:
-            query = """
+            query_count = """
+                SELECT COUNT(*) AS total
+                FROM facturas f
+                LEFT JOIN clientes c ON f.cliente_id = c.id
+                LEFT JOIN usuarios u ON f.usuario_id = u.id
+                WHERE (f.usuario_id = %s OR c.usuario_id = %s) AND f.estado != 'Inactivo'
+            """
+            query_data = """
                 SELECT 
                     f.id,
                     COALESCE(f.numero_factura, f.num_factura, '#' || f.id::text) AS numero_factura,
@@ -1530,29 +1380,47 @@ def facturacion():
                     ) AS cliente,
                     COALESCE(c.email, u.email, 'S/C') AS identificacion,
                     COALESCE(f.comprobante_transferencia, '') AS comprobante_transferencia,
-                    COALESCE(f.activo, TRUE) AS activo
+                    COALESCE(f.activo, TRUE) AS activo,
+                    COUNT(*) OVER() AS total_count
                 FROM facturas f
                 LEFT JOIN clientes c ON f.cliente_id = c.id
                 LEFT JOIN usuarios u ON f.usuario_id = u.id
-                WHERE (f.usuario_id = %s OR c.usuario_id = %s)
-                  AND f.estado != 'Inactivo'
+                WHERE (f.usuario_id = %s OR c.usuario_id = %s) AND f.estado != 'Inactivo'
             """
             params = [usuario_actual_id, usuario_actual_id]
             if busqueda:
-                query += " AND (f.numero_factura ILIKE %s OR COALESCE(f.comprobante_transferencia, '') ILIKE %s)"
-                params.extend([f"%{busqueda}%", f"%{busqueda}%"])
+                filtro_sql = " AND (f.numero_factura ILIKE %s OR COALESCE(f.comprobante_transferencia, '') ILIKE %s)"
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params.extend([param_busqueda, param_busqueda])
 
-            query += " ORDER BY f.id DESC"
-            cursor.execute(query, tuple(params))
+            cursor.execute(query_count, tuple(params))
+            res_count = cursor.fetchone()
+            total_registros = res_count['total'] if res_count else 0
+            if total_registros is None:
+                total_registros = 0
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY f.id DESC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
             facturas = cursor.fetchall()
-            return render_template('facturacion.html', facturas=facturas, es_admin=False, busqueda=busqueda)
+
+            return render_template(
+                'facturacion.html', 
+                facturas=facturas, 
+                es_admin=False, 
+                busqueda=busqueda,
+                page=pagina,
+                total_pages=total_paginas,
+                total_registros=total_registros
+            )
     finally:
         cursor.close()
         conn.close()
 
 
 # -----------------------------------------------------------------------------
-# 6. CONFIRMAR PAGO (ADMINISTRADOR) Y EMISIÓN OFICIAL SRI (SIN BLOQUEO TRIGGER)
+# 6. CONFIRMAR PAGO (ADMINISTRADOR) Y EMISIÓN OFICIAL SRI
 # -----------------------------------------------------------------------------
 @app.route('/facturacion/confirmar-pago/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1567,7 +1435,6 @@ def confirmar_pago_factura(id):
             flash('La orden especificada no existe.', 'warning')
             return redirect(url_for('facturacion'))
 
-        # Secuencial oficial SRI tipo 001-001-XXXXXXXXX
         cursor.execute("""
             SELECT COALESCE(MAX(id), 0) + 1 AS siguiente_id 
             FROM facturas 
@@ -1625,11 +1492,11 @@ def confirmar_pago_cita(id):
 
         precios_servicios = {
             'Corte de Cabello': 7.00,
-            'Arreglo de Barba Clásica': 5.00,
-            'Cuidado y Limpieza Facial': 8.00,
-            'Combo Completo (Corte + Barba + Facial)': 18.00,
+            'Arreglo de Barba Clásica': 6.00,
+            'Cuidado y Limpieza Facial': 30.00,
+            'Combo Completo (Corte + Barba + Facial)': 12.00,
         }
-        subtotal = float(precios_servicios.get(cita['servicio'], 10.00))
+        subtotal = float(precios_servicios.get(cita['servicio'], 7.00))
         iva = round(subtotal * 0.15, 2)
         total = round(subtotal + iva, 2)
 
@@ -1672,9 +1539,6 @@ def confirmar_pago_cita(id):
         conn.close()
 
 
-# -----------------------------------------------------------------------------
-# 8. FACTURAR Y COBRAR DIRECTAMENTE UNA CITA (DESDE EL BOTÓN COBRAR)
-# -----------------------------------------------------------------------------
 @app.route('/citas/cobrar/<int:cita_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -1683,7 +1547,7 @@ def cobrar_cita(cita_id):
 
 
 # -----------------------------------------------------------------------------
-# 9. EDITAR FACTURA (FORMULARIO CONECTADO A POSTGRESQL)
+# 9. EDITAR FACTURA
 # -----------------------------------------------------------------------------
 @app.route('/facturacion/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1739,19 +1603,7 @@ def editar_factura(id):
                         cliente_id = %s
                     WHERE id = %s
                     """,
-                    (
-                        nuevo_metodo,
-                        nuevo_estado,
-                        nuevo_num_factura,
-                        nuevo_num_factura,
-                        subtotal,
-                        iva,
-                        iva,
-                        descuento,
-                        total,
-                        cliente_id,
-                        id,
-                    ),
+                    (nuevo_metodo, nuevo_estado, nuevo_num_factura, nuevo_num_factura, subtotal, iva, iva, descuento, total, cliente_id, id),
                 )
                 conn.commit()
                 flash(f'Registro #{id} actualizado exitosamente.', 'success')
@@ -1875,34 +1727,14 @@ def nueva_factura():
             cursor.execute(
                 """
                 INSERT INTO facturas (
-                    num_factura,
-                    numero_factura, 
-                    fecha, 
-                    subtotal, 
-                    iva, 
-                    impuestos, 
-                    descuento, 
-                    total, 
-                    estado, 
-                    cliente_id, 
-                    usuario_id, 
-                    metodo_pago,
-                    activo
+                    num_factura, numero_factura, fecha, subtotal, iva, impuestos, descuento, total, 
+                    estado, cliente_id, usuario_id, metodo_pago, activo
                 ) VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE)
                 RETURNING id
                 """,
                 (
-                    numero_factura,
-                    numero_factura,
-                    subtotal,
-                    iva,
-                    iva,
-                    descuento,
-                    total,
-                    estado,
-                    cliente_id,
-                    session.get('usuario_id'),
-                    metodo_pago,
+                    numero_factura, numero_factura, subtotal, iva, iva, descuento, total, 
+                    estado, cliente_id, session.get('usuario_id'), metodo_pago
                 ),
             )
             nueva_factura_id = cursor.fetchone()['id']
@@ -1954,7 +1786,7 @@ def nueva_factura():
 
 
 # -----------------------------------------------------------------------------
-# 10. DETALLE, VISUALIZACIÓN E IMPRESIÓN DIRECTA EN FORMATO PDF
+# 10. DETALLE E IMPRESIÓN DE FACTURA
 # -----------------------------------------------------------------------------
 @app.route('/factura/<int:id>')
 @app.route('/facturacion/detalle/<int:id>')
@@ -2035,20 +1867,63 @@ def ver_factura(id):
         conn.close()
 
 
-# =============================================================================
-# 11. MÓDULO DE PROVEEDORES (PostgreSQL)
-# =============================================================================
+# -----------------------------------------------------------------------------
+# 11. MÓDULO DE PROVEEDORES (Paginación Profesional y Orden Alfabético)
+# -----------------------------------------------------------------------------
 @app.route('/proveedores')
 @login_required
 @admin_required
 def proveedores():
+    busqueda = request.args.get('q', '').strip()
+    try:
+        pagina = int(request.args.get('page', 1))
+        if pagina < 1:
+            pagina = 1
+    except (ValueError, TypeError):
+        pagina = 1
+
+    por_pagina = 8
+    offset = (pagina - 1) * por_pagina
+
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute('SELECT * FROM proveedores ORDER BY ruc ASC')
-    proveedores_db = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template('proveedores.html', proveedores=proveedores_db)
+    param_busqueda = f'%{busqueda}%'
+
+    try:
+        query_count = "SELECT COUNT(*) AS total FROM proveedores WHERE empresa ILIKE %s OR ruc ILIKE %s"
+        cursor.execute(query_count, (param_busqueda, param_busqueda))
+        total_registros = cursor.fetchone()['total']
+        total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+        cursor.execute(
+            """
+            SELECT *, COUNT(*) OVER() AS total_count 
+            FROM proveedores 
+            WHERE empresa ILIKE %s OR ruc ILIKE %s
+            ORDER BY empresa ASC 
+            LIMIT %s OFFSET %s
+            """,
+            (param_busqueda, param_busqueda, por_pagina, offset)
+        )
+        proveedores_db = cursor.fetchall()
+
+    except Exception as e:
+        flash(f'Error al cargar proveedores: {e}', 'danger')
+        proveedores_db = []
+        total_registros = 0
+        total_paginas = 1
+    finally:
+        cursor.close()
+        conn.close()
+
+    return render_template(
+        'proveedores.html', 
+        proveedores=proveedores_db,
+        busqueda=busqueda,
+        page=pagina,
+        total_pages=total_paginas,
+        total_registros=total_registros
+    )
 
 
 @app.route('/proveedores/nuevo', methods=['GET', 'POST'])
@@ -2089,9 +1964,7 @@ def formulario_proveedor():
         conn.close()
         return redirect(url_for('proveedores'))
 
-    return render_template(
-        'formulario_proveedores.html', form=form, editando=False
-    )
+    return render_template('formulario_proveedores.html', form=form, editando=False)
 
 
 @app.route('/proveedores/editar/<string:ruc>', methods=['GET', 'POST'])
@@ -2149,9 +2022,7 @@ def editar_proveedor(ruc):
 
     cursor.close()
     conn.close()
-    return render_template(
-        'formulario_proveedores.html', form=form, editando=True
-    )
+    return render_template('formulario_proveedores.html', form=form, editando=True)
 
 
 @app.route('/proveedores/eliminar/<string:ruc>')
@@ -2175,8 +2046,7 @@ def cambiar_estado_proveedor(ruc):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "UPDATE proveedores SET estado = CASE WHEN estado = 'Activo' THEN"
-        " 'Inactivo' ELSE 'Activo' END WHERE ruc = %s",
+        "UPDATE proveedores SET estado = CASE WHEN estado = 'Activo' THEN 'Inactivo' ELSE 'Activo' END WHERE ruc = %s",
         (ruc,),
     )
     conn.commit()
@@ -2186,9 +2056,9 @@ def cambiar_estado_proveedor(ruc):
     return redirect(url_for('proveedores'))
 
 
-# =============================================================================
-# 12. MÓDULO DE CITAS (PostgreSQL CON BUSCADOR Y 3 MÉTODOS DE PAGO)
-# =============================================================================
+# -----------------------------------------------------------------------------
+# 12. MÓDULO DE CITAS (Paginación Profesional y Orden Alfabético)
+# -----------------------------------------------------------------------------
 @app.route('/citas')
 @login_required
 def citas():
@@ -2198,29 +2068,47 @@ def citas():
     rol_actual = session.get('rol')
     usuario_id = session.get('usuario_id')
     busqueda = request.args.get('q', '').strip()
+    try:
+        pagina = int(request.args.get('page', 1))
+        if pagina < 1:
+            pagina = 1
+    except (ValueError, TypeError):
+        pagina = 1
+
+    por_pagina = 8
+    offset = (pagina - 1) * por_pagina
+    param_busqueda = f'%{busqueda}%'
 
     try:
-        consulta_base = """
-            SELECT c.id, c.barbero_id, c.servicio, c.fecha, c.hora, c.estado, c.cliente_id,
-                   c.notas_cliente, c.motivo_cancelacion,
-                   COALESCE(c.metodo_pago, 'Efectivo en Barbería') AS metodo_pago,
-                   COALESCE(c.comprobante_pago, '') AS comprobante_pago,
-                   COALESCE(
-                       NULLIF(TRIM(cl.nombre || ' ' || cl.apellido), ''),
-                       u.nombre_completo,
-                       cl.nombre,
-                       'Cliente General'
-                   ) AS nombre_final,
-                   COALESCE(cl.telefono, 'S/N') AS cliente_telefono
-            FROM citas c
-            LEFT JOIN clientes cl ON c.cliente_id = cl.id
-            LEFT JOIN usuarios u ON cl.usuario_id = u.id
-        """
-
-        params = []
         if rol_actual == 'Administrador':
+            query_count = """
+                SELECT COUNT(*) AS total
+                FROM citas c
+                LEFT JOIN clientes cl ON c.cliente_id = cl.id
+                LEFT JOIN usuarios u ON cl.usuario_id = u.id
+                WHERE 1=1
+            """
+            query_data = """
+                SELECT c.id, c.barbero_id, c.servicio, c.fecha, c.hora, c.estado, c.cliente_id,
+                       c.notas_cliente, c.motivo_cancelacion,
+                       COALESCE(c.metodo_pago, 'Efectivo en Barbería') AS metodo_pago,
+                       COALESCE(c.comprobante_pago, '') AS comprobante_pago,
+                       COALESCE(
+                           NULLIF(TRIM(cl.nombre || ' ' || cl.apellido), ''),
+                           u.nombre_completo,
+                           cl.nombre,
+                           'Cliente General'
+                       ) AS nombre_final,
+                       COALESCE(cl.telefono, 'S/N') AS cliente_telefono,
+                       COUNT(*) OVER() AS total_count
+                FROM citas c
+                LEFT JOIN clientes cl ON c.cliente_id = cl.id
+                LEFT JOIN usuarios u ON cl.usuario_id = u.id
+                WHERE 1=1
+            """
+            params = []
             if busqueda:
-                consulta_base += """ WHERE (
+                filtro_sql = """ AND (
                     cl.nombre ILIKE %s OR 
                     cl.apellido ILIKE %s OR 
                     u.nombre_completo ILIKE %s OR 
@@ -2228,30 +2116,60 @@ def citas():
                     COALESCE(cl.telefono, '') ILIKE %s OR
                     COALESCE(c.comprobante_pago, '') ILIKE %s
                 )"""
-                p = f"%{busqueda}%"
-                params = [p, p, p, p, p, p]
-            consulta_base += ' ORDER BY c.id DESC'
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params = [param_busqueda]*6
+
+            cursor.execute(query_count, tuple(params))
+            total_registros = cursor.fetchone()['total']
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY c.id DESC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
+            filas = cursor.fetchall()
         else:
-            consulta_base += """
-                WHERE (cl.usuario_id = %s OR c.cliente_id IN (
-                    SELECT id FROM clientes WHERE usuario_id = %s
-                ))
+            query_count = """
+                SELECT COUNT(*) AS total
+                FROM citas c
+                LEFT JOIN clientes cl ON c.cliente_id = cl.id
+                WHERE (cl.usuario_id = %s OR c.cliente_id IN (SELECT id FROM clientes WHERE usuario_id = %s))
+            """
+            query_data = """
+                SELECT c.id, c.barbero_id, c.servicio, c.fecha, c.hora, c.estado, c.cliente_id,
+                       c.notas_cliente, c.motivo_cancelacion,
+                       COALESCE(c.metodo_pago, 'Efectivo en Barbería') AS metodo_pago,
+                       COALESCE(c.comprobante_pago, '') AS comprobante_pago,
+                       COALESCE(
+                           NULLIF(TRIM(cl.nombre || ' ' || cl.apellido), ''),
+                           cl.nombre,
+                           'Cliente General'
+                       ) AS nombre_final,
+                       COALESCE(cl.telefono, 'S/N') AS cliente_telefono,
+                       COUNT(*) OVER() AS total_count
+                FROM citas c
+                LEFT JOIN clientes cl ON c.cliente_id = cl.id
+                WHERE (cl.usuario_id = %s OR c.cliente_id IN (SELECT id FROM clientes WHERE usuario_id = %s))
             """
             params = [usuario_id, usuario_id]
             if busqueda:
-                consulta_base += " AND (c.servicio ILIKE %s OR COALESCE(c.comprobante_pago, '') ILIKE %s)"
-                params.extend([f"%{busqueda}%", f"%{busqueda}%"])
-            consulta_base += ' ORDER BY c.id DESC'
+                filtro_sql = " AND (c.servicio ILIKE %s OR COALESCE(c.comprobante_pago, '') ILIKE %s)"
+                query_count += filtro_sql
+                query_data += filtro_sql
+                params.extend([param_busqueda, param_busqueda])
 
-        cursor.execute(consulta_base, tuple(params))
-        filas = cursor.fetchall()
+            cursor.execute(query_count, tuple(params))
+            res_count = cursor.fetchone()
+            total_registros = res_count['total'] if res_count else 0
+            total_paginas = max(1, math.ceil(total_registros / por_pagina))
+
+            query_data += " ORDER BY c.id DESC LIMIT %s OFFSET %s"
+            cursor.execute(query_data, tuple(params + [por_pagina, offset]))
+            filas = cursor.fetchall()
 
         citas_db = []
         for fila in filas:
             b_id = fila.get('barbero_id')
-            fila['barbero'] = BARBEROS_MAP.get(
-                b_id, BARBEROS_MAP.get(str(b_id), 'Andrés Hernández')
-            )
+            fila['barbero'] = BARBEROS_MAP.get(b_id, BARBEROS_MAP.get(str(b_id), 'Andrés Hernández'))
             nom = fila.get('nombre_final') or 'Cliente General'
             fila['cliente'] = nom
             fila['cliente_nombre'] = nom
@@ -2259,14 +2177,21 @@ def citas():
             fila['nombre_cliente'] = nom
             citas_db.append(fila)
 
+        return render_template(
+            'citas.html', 
+            citas=citas_db, 
+            busqueda=busqueda,
+            page=pagina,
+            total_pages=total_paginas,
+            total_registros=total_registros
+        )
+
     except Exception as e:
         flash(f'Error al cargar el listado de citas: {e}', 'danger')
-        citas_db = []
+        return render_template('citas.html', citas=[], busqueda=busqueda, page=1, total_pages=1, total_registros=0)
     finally:
         cursor.close()
         conn.close()
-
-    return render_template('citas.html', citas=citas_db, busqueda=busqueda)
 
 
 @app.route('/citas/nueva', methods=['GET', 'POST'])
@@ -2283,10 +2208,7 @@ def formulario_cita():
             conn = get_db_connection()
             cur = conn.cursor(cursor_factory=RealDictCursor)
             try:
-                cur.execute(
-                    'SELECT telefono FROM clientes WHERE usuario_id = %s LIMIT 1',
-                    (usuario_id,),
-                )
+                cur.execute('SELECT telefono FROM clientes WHERE usuario_id = %s LIMIT 1', (usuario_id,))
                 cl = cur.fetchone()
                 if cl and cl.get('telefono'):
                     form.telefono.data = cl['telefono']
@@ -2296,42 +2218,44 @@ def formulario_cita():
                 cur.close()
                 conn.close()
 
-    if form.validate_on_submit():
-        hora_seleccionada = form.hora.data
-        if isinstance(hora_seleccionada, str):
-            hora_seleccionada = dt.strptime(hora_seleccionada.strip(), '%H:%M').time()
+    if request.method == 'POST':
+        nombre_input = request.form.get('cliente', '').strip()
+        telefono_input = request.form.get('telefono', '').strip()
+        fecha_input = request.form.get('fecha', '').strip()
+        hora_input = request.form.get('hora', '').strip()
+        barbero_input = request.form.get('barbero', '1')
+        servicio_input = request.form.get('servicio', '')
 
-        hora_inicio = time(9, 0)
-        hora_fin = time(21, 0)
-
-        if hora_seleccionada < hora_inicio or hora_seleccionada > hora_fin:
-            flash(
-                'El horario de atención es exclusivamente de 09:00 AM a 09:00 PM.',
-                'warning',
-            )
+        partes_nombre = nombre_input.split()
+        if len(partes_nombre) < 2:
+            flash('Por favor ingrese su nombre y apellido completos.', 'danger')
             return render_template('formulario_cita.html', form=form, editando=False)
 
-        # Capturar la opción de pago (3 opciones)
+        if not servicio_input:
+            flash('Debe seleccionar un servicio principal.', 'danger')
+            return render_template('formulario_cita.html', form=form, editando=False)
+
+        try:
+            hora_seleccionada = dt.strptime(hora_input.strip(), '%H:%M').time()
+        except ValueError:
+            try:
+                hora_seleccionada = dt.strptime(hora_input.strip(), '%I:%M %p').time()
+            except Exception:
+                hora_seleccionada = time(9, 0)
+
+        if hora_seleccionada < time(9, 0) or hora_seleccionada > time(21, 0):
+            flash('El horario de atención es exclusivamente de 09:00 AM a 09:00 PM.', 'warning')
+            return render_template('formulario_cita.html', form=form, editando=False)
+
         metodo_pago = request.form.get('metodo_pago', 'Efectivo en Barbería')
         comprobante = request.form.get('comprobante_pago', '').strip()
 
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            nombre_input = (
-                form.cliente.data.strip()
-                if (hasattr(form, 'cliente') and form.cliente.data)
-                else session.get('usuario_nombre', 'Cliente General')
-            )
-            telefono_input = (
-                form.telefono.data.strip()
-                if (hasattr(form, 'telefono') and form.telefono.data)
-                else '0999999999'
-            )
-
-            partes = nombre_input.split(' ', 1)
-            nom = partes[0]
-            ape = partes[1] if len(partes) > 1 else 'General'
+            nom = partes_nombre[0]
+            ape = " ".join(partes_nombre[1:])
+            telefono_val = telefono_input if telefono_input else '0999999999'
 
             cursor.execute(
                 """
@@ -2339,7 +2263,7 @@ def formulario_cita():
                 WHERE (usuario_id = %s AND %s != 'Administrador') OR telefono = %s
                 LIMIT 1
                 """,
-                (usuario_id, rol_actual, telefono_input),
+                (usuario_id, rol_actual, telefono_val),
             )
             cliente_existente = cursor.fetchone()
 
@@ -2348,51 +2272,29 @@ def formulario_cita():
             else:
                 cursor.execute(
                     """
-                    INSERT INTO clientes (usuario_id, nombre, apellido, telefono)
-                    VALUES (%s, %s, %s, %s)
+                    INSERT INTO clientes (usuario_id, nombre, apellido, telefono, estado)
+                    VALUES (%s, %s, %s, %s, 'Activo')
                     RETURNING id
                     """,
-                    (
-                        usuario_id if rol_actual == 'Cliente' else None,
-                        nom,
-                        ape,
-                        telefono_input,
-                    ),
+                    (usuario_id if rol_actual == 'Cliente' else None, nom, ape, telefono_val),
                 )
                 cliente_id = cursor.fetchone()['id']
 
-            b_val = form.barbero.data if hasattr(form, 'barbero') else '1'
-            barbero_id_sql = int(b_val) if str(b_val).isdigit() else 1
+            barbero_id_sql = int(barbero_input) if str(barbero_input).isdigit() else 1
+            servicio_nombre = SERVICIOS_MAP.get(servicio_input, SERVICIOS_MAP.get(int(servicio_input) if servicio_input.isdigit() else 1, 'Corte de Cabello'))
+            
+            notas_cli = request.form.get('notas_cliente', '').strip()
 
-            s_val = (
-                form.servicio.data
-                if hasattr(form, 'servicio')
-                else 'Corte de Cabello'
-            )
-            servicio_nombre = SERVICIOS_MAP.get(s_val, s_val)
-
-            notas_cli = None
-            if hasattr(form, 'notas_cliente') and form.notas_cliente.data:
-                notas_cli = form.notas_cliente.data.strip()
-            elif request.form.get('notas_cliente'):
-                notas_cli = request.form.get('notas_cliente').strip()
-
-            cursor.execute("""
-                SELECT column_name 
-                FROM information_schema.columns 
-                WHERE table_name = 'citas'
-            """)
+            cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'citas'")
             columnas_citas = [c['column_name'] for c in cursor.fetchall()]
 
             campos = ['cliente_id', 'barbero_id', 'servicio', 'fecha', 'hora', 'estado', 'notas_cliente']
-            valores = [cliente_id, barbero_id_sql, servicio_nombre, form.fecha.data, form.hora.data, 'Pendiente', notas_cli]
+            valores = [cliente_id, barbero_id_sql, servicio_nombre, fecha_input, hora_seleccionada, 'Pendiente', notas_cli if notas_cli else None]
 
             if 'metodo_pago' in columnas_citas:
-                campos.append('metodo_pago')
-                valores.append(metodo_pago)
+                campos.append('metodo_pago'); valores.append(metodo_pago)
             if 'comprobante_pago' in columnas_citas:
-                campos.append('comprobante_pago')
-                valores.append(comprobante)
+                campos.append('comprobante_pago'); valores.append(comprobante)
 
             placeholders = ', '.join(['%s'] * len(campos))
             cols_str = ', '.join(campos)
@@ -2406,7 +2308,6 @@ def formulario_cita():
 
         except Exception as e:
             conn.rollback()
-            print('Error SQL al guardar cita:', e)
             flash(f'Error al registrar la cita: {e}', 'danger')
         finally:
             cursor.close()
@@ -2419,10 +2320,7 @@ def formulario_cita():
 @login_required
 def cambiar_estado_cita(id):
     if session.get('rol') != 'Administrador':
-        flash(
-            'Acceso restringido: solo el Administrador puede modificar el estado de una cita.',
-            'danger',
-        )
+        flash('Acceso restringido: solo el Administrador puede modificar el estado de una cita.', 'danger')
         return redirect(url_for('citas'))
 
     conn = get_db_connection()
@@ -2443,13 +2341,9 @@ def cambiar_estado_cita(id):
         else:
             nuevo_estado = 'Pendiente'
 
-        cursor.execute(
-            'UPDATE citas SET estado = %s WHERE id = %s', (nuevo_estado, id)
-        )
+        cursor.execute('UPDATE citas SET estado = %s WHERE id = %s', (nuevo_estado, id))
         conn.commit()
-        flash(
-            f'¡Estado de la cita #{id} actualizado a "{nuevo_estado}"!', 'success'
-        )
+        flash(f'¡Estado de la cita #{id} actualizado a "{nuevo_estado}"!', 'success')
     except Exception as e:
         conn.rollback()
         flash(f'Error al cambiar estado: {e}', 'danger')
@@ -2518,30 +2412,33 @@ def editar_cita(id):
                     break
             form.servicio.data = codigo_servicio
 
-    if form.validate_on_submit():
-        hora_seleccionada = form.hora.data
-        if isinstance(hora_seleccionada, str):
-            hora_seleccionada = dt.strptime(hora_seleccionada.strip(), '%H:%M').time()
+    if request.method == 'POST':
+        nombre_input = request.form.get('cliente', '').strip()
+        partes_nombre = nombre_input.split()
+        if len(partes_nombre) < 2:
+            flash('Por favor ingrese su nombre y apellido completos.', 'danger')
+            return render_template('formulario_cita.html', form=form, editando=True, cita_id=id)
 
-        if hora_seleccionada < time(9, 0) or hora_seleccionada > time(21, 0):
-            flash(
-                'El horario de atención es exclusivamente de 09:00 AM a 09:00 PM.',
-                'warning',
-            )
-            return render_template(
-                'formulario_cita.html', form=form, editando=True, cita_id=id
-            )
+        fecha_input = request.form.get('fecha', '').strip()
+        hora_input = request.form.get('hora', '').strip()
+        barbero_input = request.form.get('barbero', '1')
+        servicio_input = request.form.get('servicio', '1')
 
         try:
-            b_val = form.barbero.data if hasattr(form, 'barbero') else '1'
-            barbero_id_sql = int(b_val) if str(b_val).isdigit() else 1
+            hora_seleccionada = dt.strptime(hora_input.strip(), '%H:%M').time()
+        except ValueError:
+            try:
+                hora_seleccionada = dt.strptime(hora_input.strip(), '%I:%M %p').time()
+            except Exception:
+                hora_seleccionada = time(9, 0)
 
-            s_val = (
-                form.servicio.data
-                if hasattr(form, 'servicio')
-                else 'Corte de Cabello'
-            )
-            servicio_nombre = SERVICIOS_MAP.get(s_val, s_val)
+        if hora_seleccionada < time(9, 0) or hora_seleccionada > time(21, 0):
+            flash('El horario de atención es exclusivamente de 09:00 AM a 09:00 PM.', 'warning')
+            return render_template('formulario_cita.html', form=form, editando=True, cita_id=id)
+
+        try:
+            barbero_id_sql = int(barbero_input) if str(barbero_input).isdigit() else 1
+            servicio_nombre = SERVICIOS_MAP.get(servicio_input, SERVICIOS_MAP.get(int(servicio_input) if servicio_input.isdigit() else 1, 'Corte de Cabello'))
 
             cursor.execute(
                 """
@@ -2549,13 +2446,7 @@ def editar_cita(id):
                 SET barbero_id = %s, servicio = %s, fecha = %s, hora = %s
                 WHERE id = %s
                 """,
-                (
-                    barbero_id_sql,
-                    servicio_nombre,
-                    form.fecha.data,
-                    form.hora.data,
-                    id,
-                ),
+                (barbero_id_sql, servicio_nombre, fecha_input, hora_seleccionada, id),
             )
 
             conn.commit()
@@ -2563,7 +2454,6 @@ def editar_cita(id):
             return redirect(url_for('citas'))
         except Exception as e:
             conn.rollback()
-            print('Error SQL al editar cita:', e)
             flash(f'Error al actualizar la cita: {e}', 'danger')
         finally:
             cursor.close()
@@ -2572,9 +2462,7 @@ def editar_cita(id):
         cursor.close()
         conn.close()
 
-    return render_template(
-        'formulario_cita.html', form=form, editando=True, cita_id=id
-    )
+    return render_template('formulario_cita.html', form=form, editando=True, cita_id=id)
 
 
 @app.route('/citas/eliminar/<int:id>', methods=['GET', 'POST'])
@@ -2585,14 +2473,7 @@ def eliminar_cita(id):
     try:
         motivo = request.form.get('motivo_cancelacion')
         if motivo:
-            cursor.execute(
-                """
-                UPDATE citas 
-                SET estado = 'Cancelada', motivo_cancelacion = %s 
-                WHERE id = %s
-                """,
-                (motivo, id),
-            )
+            cursor.execute("UPDATE citas SET estado = 'Cancelada', motivo_cancelacion = %s WHERE id = %s", (motivo, id))
             conn.commit()
             flash(f'¡Cita #{id} cancelada con motivo registrado!', 'warning')
         else:
